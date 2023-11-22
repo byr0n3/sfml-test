@@ -1,21 +1,36 @@
 #include <SFML/Graphics.hpp>
 
-int main()
-{
-    auto window = sf::RenderWindow{ { 1920u, 1080u }, "CMake SFML Project" };
-    window.setFramerateLimit(144);
+int main() {
+	auto screenSize = sf::VideoMode(960, 540);
+	auto window = sf::RenderWindow(screenSize, "SFML Test");
 
-    while (window.isOpen())
-    {
-        for (auto event = sf::Event{}; window.pollEvent(event);)
-        {
-            if (event.type == sf::Event::Closed)
-            {
-                window.close();
-            }
-        }
+	// window.setFramerateLimit(144);
 
-        window.clear();
-        window.display();
-    }
+	bool open = true;
+
+	while (open) {
+		// handle every event
+		for (auto event = sf::Event(); window.pollEvent(event);) {
+			switch (event.type) {
+				case sf::Event::Closed:
+					open = false;
+					break;
+
+				case sf::Event::KeyPressed:
+					if (event.key.scancode == sf::Keyboard::Scancode::Escape) {
+						open = false;
+					}
+
+					break;
+
+				default:
+					break;
+			}
+		}
+
+		window.clear();
+		window.display();
+	}
+
+	window.close();
 }
