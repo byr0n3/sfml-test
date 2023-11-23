@@ -5,6 +5,25 @@
 const int WIDTH = 960;
 const int HEIGHT = 540;
 
+std::string getMetricsLabel(sf::Time deltaTime) {
+	auto ms = deltaTime.asSeconds() * 1000;
+
+	auto msStr = std::to_string(ms);
+
+	// the warning made me go mad sorry for cast
+	for (auto i = (int) msStr.length() - 1; i >= 0; i--) {
+		if (msStr[i] != '0') {
+			break;
+		}
+
+		msStr.pop_back();
+	}
+
+	// @todo FPS calc might be slightly off
+	return "FPS: " + std::to_string(static_cast<int>(1 / ms * 1000)) +
+		   " | Frame time: " + msStr + "ms";
+}
+
 int main() {
 	auto screenSize = sf::VideoMode(WIDTH, HEIGHT);
 
@@ -13,23 +32,34 @@ int main() {
 
 	sf::RenderWindow window = sf::RenderWindow(screenSize, "SFML Test", sf::Style::Default, settings);
 
-	// window.setFramerateLimit(144);
+	window.setFramerateLimit(144);
 
 	byrone::Game game(WIDTH, HEIGHT);
 
 	game.initialize();
 
 	sf::Clock clock;
+	sf::Time current;
 
 	while (game.isOpen()) {
 		sf::Time deltaTime = clock.restart();
+		current += deltaTime;
 
-		// std::cout << deltaTime.asMilliseconds() << " ms" << std::endl;
+		if (current.asMilliseconds() >= 500) {
+			window.setTitle(getMetricsLabel(deltaTime));
+			current = sf::microseconds(0);
+		}
 
-		game.handleInput(&window);
+		game.handleEvents(&window);
 
+		if (window.hasFocus()) {
+			game.handleInput();
+		}
+
+		// @todo Only when focus?
 		game.update(deltaTime);
 
+		// @todo Only when focus?
 		game.render(&window);
 	}
 

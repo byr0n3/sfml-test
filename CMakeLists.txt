@@ -10,7 +10,8 @@ FetchContent_Declare(SFML GIT_REPOSITORY https://github.com/SFML/SFML.git GIT_TA
 FetchContent_MakeAvailable(SFML)
 
 add_executable(sfml-test src/main.cpp
-        src/core/game.h src/core/game.cpp)
+        src/core/game.h src/core/game.cpp
+        src/core/entity.h src/core/entity.cpp)
 target_link_libraries(sfml-test PRIVATE sfml-graphics)
 target_compile_features(sfml-test PRIVATE cxx_std_17)
 
@@ -21,5 +22,7 @@ if (WIN32)
             PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${SFML_SOURCE_DIR}/extlibs/bin/$<IF:$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>,x64,x86>/openal32.dll $<TARGET_FILE_DIR:sfml-test>
             VERBATIM)
 endif ()
+
+file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
 
 install(TARGETS sfml-test)

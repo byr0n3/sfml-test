@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
+#include "entity.h"
 
 namespace byrone {
 	class Game {
@@ -23,7 +24,9 @@ namespace byrone {
 
 		void initialize();
 
-		void handleInput(sf::RenderWindow *window);
+		void handleEvents(sf::RenderWindow *window);
+
+		void handleInput();
 
 		void update(sf::Time deltaTime);
 
@@ -38,11 +41,10 @@ namespace byrone {
 
 		bool open;
 
-		// Testing variables
+		Entity player;
 
-		sf::CircleShape circle;
-
-		sf::Vector2f position;
+		// @todo Move?
+		sf::Vector2f input;
 	};
 }
 
