@@ -34,7 +34,11 @@ jobs:
         shell: bash
         run: cmake --build build --config Release
 
-      - uses: actions/upload-artifact@v3
+      - name: Zip build
+        shell: bash
+        run: (cd build/bin && zip -r ../../${{matrix.platform.name}}.zip .)
+
+      - name: Upload artifact
+        uses: softprops/action-gh-release@v1
         with:
-          name: my-artifact
-          path: build/bin/
+          files: ./${{matrix.platform.name}}.zip
