@@ -9,7 +9,8 @@ include(FetchContent)
 FetchContent_Declare(SFML GIT_REPOSITORY https://github.com/SFML/SFML.git GIT_TAG 2.6.x)
 FetchContent_MakeAvailable(SFML)
 
-add_executable(sfml-test src/main.cpp)
+add_executable(sfml-test src/main.cpp
+        src/core/game.h src/core/game.cpp)
 target_link_libraries(sfml-test PRIVATE sfml-graphics)
 target_compile_features(sfml-test PRIVATE cxx_std_17)
 

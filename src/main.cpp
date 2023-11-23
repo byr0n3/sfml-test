@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include "core/game.h"
 
 const int WIDTH = 960;
 const int HEIGHT = 540;
@@ -7,56 +8,29 @@ const int HEIGHT = 540;
 int main() {
 	auto screenSize = sf::VideoMode(WIDTH, HEIGHT);
 
-	sf::ContextSettings settings;
-	settings.antialiasingLevel = 16;
+	// @todo Use 3.3?
+	sf::ContextSettings settings(0, 0, 16, 2, 1);
 
-	auto window = sf::RenderWindow(screenSize, "SFML Test", sf::Style::Default, settings);
+	sf::RenderWindow window = sf::RenderWindow(screenSize, "SFML Test", sf::Style::Default, settings);
 
 	// window.setFramerateLimit(144);
 
-	bool open = true;
+	byrone::Game game(WIDTH, HEIGHT);
+
+	game.initialize();
 
 	sf::Clock clock;
 
-	while (open) {
-		sf::Time time = clock.restart();
-		// @todo Only every half second or so
-		std::cout << time.asMilliseconds() << " ms" << std::endl;
+	while (game.isOpen()) {
+		sf::Time deltaTime = clock.restart();
 
-		// handle every event
-		for (auto event = sf::Event(); window.pollEvent(event);) {
-			switch (event.type) {
-				case sf::Event::Closed:
-					open = false;
-					break;
+		// std::cout << deltaTime.asMilliseconds() << " ms" << std::endl;
 
-				case sf::Event::KeyPressed:
-					if (event.key.scancode == sf::Keyboard::Scancode::Escape) {
-						open = false;
-					}
+		game.handleInput(&window);
 
-					break;
+		game.update(deltaTime);
 
-				default:
-					break;
-			}
-		}
-
-		window.clear(sf::Color::Blue);
-
-		float radius = 50.0f;
-
-		sf::CircleShape shape(radius);
-		shape.setFillColor(sf::Color::Red);
-
-		shape.setOutlineThickness(10.0f);
-		shape.setOutlineColor(sf::Color::Green);
-
-		shape.setPosition((static_cast<float>(WIDTH) / 2) - radius, (static_cast<float>(HEIGHT) / 2) - radius);
-
-		window.draw(shape);
-
-		window.display();
+		game.render(&window);
 	}
 
 	window.close();
