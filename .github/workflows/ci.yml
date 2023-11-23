@@ -34,9 +34,15 @@ jobs:
         shell: bash
         run: cmake --build build --config Release
 
-      - name: Zip build
+      - name: Compress build (Unix)
         shell: bash
+        if: runner.os != 'Windows'
         run: (cd build/bin && zip -r ../../${{matrix.platform.name}}.zip .)
+
+      - name: Compress build (Windows)
+        shell: powershell
+        if: runner.os == 'Windows'
+        run: Compress-Archive -Path build/bin/* -Destination ${{matrix.platform.name}}.zip
 
       - name: Upload artifact
         uses: softprops/action-gh-release@v1
