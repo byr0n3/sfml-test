@@ -1,30 +1,25 @@
 #ifndef BYRONE_ENTITY
 #define BYRONE_ENTITY
 
-#include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Transformable.hpp>
-#include <SFML/Graphics/VertexArray.hpp>
+#include "spritesheet.h"
+#include <SFML/Graphics/Sprite.hpp>
 
 namespace byrone {
-	// @todo Add destructor?
-	class Entity : public sf::Drawable, public sf::Transformable {
+	class Entity : public sf::Sprite {
 	public:
 		Entity();
 
-		Entity(const sf::Texture &texture,
-			   sf::Vector2f position = sf::Vector2f(0.0f, 0.0f),
-			   float rotation = 0.0f,
-			   sf::Vector2f scale = sf::Vector2f(1.0f, 1.0f),
-			   sf::Color color = sf::Color::White);
+		explicit Entity(byrone::Spritesheet *spritesheet,
+						sf::Vector2f position = sf::Vector2f(0.0f, 0.0f),
+						float rotation = 0.0f,
+						sf::Vector2f scale = sf::Vector2f(1.0f, 1.0f),
+						sf::Color color = sf::Color::White);
+
+		void updateSprite(int x, int y, int width = 0, int height = 0);
 
 	private:
 		sf::Color color;
-
-		void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
-
-		sf::VertexArray m_vertices;
-		sf::Texture m_texture;
+		std::shared_ptr<byrone::Spritesheet> spritesheet;
 	};
 }
 

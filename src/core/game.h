@@ -2,7 +2,6 @@
 #define BYRONE_GAME
 
 #include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/CircleShape.hpp>
 #include "entity.h"
 
 namespace byrone {

@@ -1,4 +1,5 @@
 #include "game.h"
+#include "spritesheet.h"
 #include <SFML/Window/Event.hpp>
 #include <iostream>
 
@@ -34,14 +35,15 @@ bool byrone::Game::isOpen() const {
 
 void byrone::Game::initialize() {
 	sf::Texture playerTexture;
-	if (!playerTexture.loadFromFile("../assets/textures/player.png")) {
+	if (!playerTexture.loadFromFile("../assets/textures/player_spritesheet.png")) {
 		std::cout << "Unable to load player texture." << std::endl;
 	}
 
-	sf::Vector2f position(this->fWidth() / 2, this->fHeight() / 2);
+	sf::Vector2i size(16, 16);
+	auto playerSheet = new byrone::Spritesheet(playerTexture, size, {16, 16});
+	sf::Vector2f position(this->fWidth() / 2 - size.x, this->fHeight() / 2 - size.y);
 
-	this->player = *new byrone::Entity(playerTexture, position);
-	this->player.scale(4.0f, 4.0f);
+	this->player = byrone::Entity(playerSheet, position, 0.0f, sf::Vector2f(4.0f, 4.0f));
 }
 
 void byrone::Game::handleEvents(sf::RenderWindow *window) {
@@ -103,7 +105,10 @@ void byrone::Game::render(sf::RenderWindow *window) {
 	// Clear every rendered pixel in the previous frame
 	window->clear(sf::Color::Blue);
 
+	this->player.updateSprite(0, 0);
+
 	// Draw our player
+	// @todo Fix texture is somehow empty?
 	window->draw(this->player);
 
 	// Swap buffers to display our new frame

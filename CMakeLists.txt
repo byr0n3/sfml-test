@@ -11,7 +11,8 @@ FetchContent_MakeAvailable(SFML)
 
 add_executable(sfml-test src/main.cpp
         src/core/game.h src/core/game.cpp
-        src/core/entity.h src/core/entity.cpp)
+        src/core/entity.h src/core/entity.cpp
+        src/core/spritesheet.h src/core/spritesheet.cpp)
 target_link_libraries(sfml-test PRIVATE sfml-graphics)
 target_compile_features(sfml-test PRIVATE cxx_std_17)
 
