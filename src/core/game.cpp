@@ -1,9 +1,10 @@
 #include "game.h"
-#include "spritesheet.h"
+#include "texturesheet.h"
 #include <SFML/Window/Event.hpp>
 #include <iostream>
 
 bool limitFrames = true;
+int spriteIdx = 0;
 
 byrone::Game::Game(unsigned int width, unsigned int height) : width(width), height(height), open(true),
 															  player(), input(0.0f, 0.0f) {
@@ -40,7 +41,7 @@ void byrone::Game::initialize() {
 	}
 
 	sf::Vector2i size(16, 16);
-	auto playerSheet = new byrone::Spritesheet(playerTexture, size, {16, 16});
+	auto playerSheet = new byrone::TextureSheet(playerTexture, size, {16, 16});
 	sf::Vector2f position(this->fWidth() / 2 - size.x, this->fHeight() / 2 - size.y);
 
 	this->player = byrone::Entity(playerSheet, position, 0.0f, sf::Vector2f(4.0f, 4.0f));
@@ -54,7 +55,7 @@ void byrone::Game::handleEvents(sf::RenderWindow *window) {
 				this->open = false;
 				break;
 
-			case sf::Event::KeyPressed:
+			case sf::Event::KeyPressed: {
 				// we don't have to check for focus here
 
 				if (event.key.scancode == sf::Keyboard::Scancode::Escape) {
@@ -68,6 +69,17 @@ void byrone::Game::handleEvents(sf::RenderWindow *window) {
 				}
 
 				break;
+			}
+
+			case sf::Event::KeyReleased: {
+				if (event.key.scancode == sf::Keyboard::Scancode::Right) {
+					spriteIdx++;
+				}
+
+				if (event.key.scancode == sf::Keyboard::Scancode::Left && spriteIdx > 0) {
+					spriteIdx--;
+				}
+			}
 
 			default:
 				break;
@@ -105,10 +117,8 @@ void byrone::Game::render(sf::RenderWindow *window) {
 	// Clear every rendered pixel in the previous frame
 	window->clear(sf::Color::Blue);
 
-	this->player.updateSprite(0, 0);
+	this->player.updateSprite(spriteIdx);
 
-	// Draw our player
-	// @todo Fix texture is somehow empty?
 	window->draw(this->player);
 
 	// Swap buffers to display our new frame
