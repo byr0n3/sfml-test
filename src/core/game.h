@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include "entity.h"
+#include "../player.h"
 
 namespace byrone {
 	class Game {
@@ -27,7 +28,7 @@ namespace byrone {
 
 		void handleInput();
 
-		void update(sf::Time deltaTime);
+		void update(float deltaTime);
 
 		void render(sf::RenderWindow *window);
 
@@ -40,10 +41,7 @@ namespace byrone {
 
 		bool open;
 
-		Entity player;
-
-		// @todo Move?
-		sf::Vector2f input;
+		Player player;
 	};
 }
 

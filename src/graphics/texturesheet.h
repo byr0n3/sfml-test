@@ -8,7 +8,7 @@ namespace byrone {
 	public:
 		TextureSheet();
 
-		TextureSheet(const sf::Texture &texture, sf::Vector2i size, sf::Vector2i padding = sf::Vector2i(0, 0));
+		TextureSheet(const sf::Texture &texture, sf::Vector2i size);
 
 		sf::Texture *getTexture();
 
@@ -20,7 +20,6 @@ namespace byrone {
 
 	private:
 		sf::Texture texture;
-		sf::Vector2i padding;
 		sf::Vector2i size;
 	};
 }
