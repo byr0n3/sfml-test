@@ -2,7 +2,7 @@
 #include "exceptions/texture_load_exception.h"
 #include <SFML/Window/Keyboard.hpp>
 
-#define TEXTURE_PATH "../assets/textures/player_spritesheet.png"
+#define TEXTURE_PATH "../assets/textures/player.png"
 
 byrone::Player::Player(sf::Vector2f position) {
 	sf::Texture playerTexture;
