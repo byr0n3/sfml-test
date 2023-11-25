@@ -1,7 +1,7 @@
 #ifndef BYRONE_TEXTURESHEET
 #define BYRONE_TEXTURESHEET
 
-#include "SFML/Graphics/Texture.hpp"
+#include <SFML/Graphics/Texture.hpp>
 
 namespace byrone {
 	class TextureSheet {

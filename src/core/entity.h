@@ -1,7 +1,7 @@
 #ifndef BYRONE_ENTITY
 #define BYRONE_ENTITY
 
-#include "texturesheet.h"
+#include "../graphics/texturesheet.h"
 #include <SFML/Graphics/Sprite.hpp>
 
 namespace byrone {
@@ -19,8 +19,9 @@ namespace byrone {
 
 		void updateSprite(int x, int y, int width = 0, int height = 0);
 
-	private:
+	protected:
 		sf::Color color;
+		// @todo No pointer?
 		std::shared_ptr<byrone::TextureSheet> textureSheet;
 	};
 }
