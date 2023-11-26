@@ -2,48 +2,68 @@
 #include "../exceptions/texture_load_exception.h"
 #include <SFML/Window/Keyboard.hpp>
 
+#define TEXTURE_TILE_SIZE sf::Vector2i(16, 16)
 #define TEXTURE_PATH "../assets/textures/player.png"
 
 byrone::Player::Player(sf::Vector2f position) {
-	this->textureSheet = new byrone::TextureSheet(TEXTURE_PATH, {16, 16});
-
-	this->setPosition(position);
-	// 16 * 4 = 64
-	this->setScale(4.0f, 4.0f);
-
+	this->textureSheet = new byrone::TextureSheet(TEXTURE_PATH, TEXTURE_TILE_SIZE);
 	this->updateSprite(0);
-}
+	this->setPosition(position);
 
-sf::Vector2i byrone::Player::getSize() const {
-	return this->textureSheet->getSize();
+	// 16 * 2 = 32
+	this->setScale(2.0f, 2.0f);
 }
 
 void byrone::Player::handleInput() {
-	// coordinates start in top-left corner so we subtract here
+	// @todo TEMP REMOVE
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-		this->input.y -= 100.0f;
+		this->input.y -= 1;
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+		this->input.y += 1;
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-		this->input.x -= 100.0f;
-	}
-
-	// coordinates start in top-left corner so we add here
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-		this->input.y += 100.0f;
+		this->input.x -= 1;
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-		this->input.x += 100.0f;
+		this->input.x += 1;
 	}
 }
 
-void byrone::Player::update(float deltaTime) {
-	if (this->input == VECTOR2F_ZERO) {
+// @todo Jumping
+// @todo Gravity
+// @todo Grounded check
+void byrone::Player::update(const float &deltaTime, std::vector<byrone::Tile> *tiles) {
+	if (this->input == VECTOR2I_ZERO) {
 		return;
 	}
 
-	this->move(this->input * deltaTime);
+	sf::Vector2i size = this->getSize();
+	sf::Vector2f movement = {(float) this->input.x * PLAYER_MOVE_SPEED, (float) this->input.y * PLAYER_MOVE_SPEED};
 
-	this->input = VECTOR2F_ZERO;
+	sf::Vector2f targetPosition = this->getPosition() + (movement * deltaTime);
+	this->input = VECTOR2I_ZERO;
+
+	sf::FloatRect playerRect(targetPosition.x, targetPosition.y, size.x, size.y);
+
+	for (const auto &tile: *tiles) {
+		sf::Vector2f diff = tile.getPosition() - targetPosition;
+
+		// don't check tiles that are out of range
+		if ((diff.x < -size.x || diff.x > size.x) ||
+			(diff.y < -size.y || diff.y > size.y)) {
+			continue;
+		}
+
+		auto bounds = tile.getGlobalBounds();
+
+		// if the target position is in a tile, don't move
+		if (bounds.intersects(playerRect)) {
+			return;
+		}
+	}
+
+	this->setPosition(targetPosition);
 }

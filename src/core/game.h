@@ -33,6 +33,8 @@ namespace byrone {
 
 		std::vector<Tile> tiles;
 
+		TextureSheet tilesSheet;
+
 	private:
 		unsigned int width;
 

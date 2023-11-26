@@ -18,8 +18,14 @@ void byrone::Entity::updateSprite(int index) {
 	this->setTextureRect(this->textureSheet->get(index));
 }
 
-
 void byrone::Entity::updateSprite(int x, int y, int width, int height) {
 	this->setTexture(*this->textureSheet->getTexture());
 	this->setTextureRect(this->textureSheet->get(x, y, width, height));
+}
+
+sf::Vector2i byrone::Entity::getSize() const {
+	sf::Vector2i size = this->textureSheet->getSize();
+	sf::Vector2f scale = this->getScale();
+
+	return {size.x * (int) scale.x, size.y * (int) scale.y};
 }

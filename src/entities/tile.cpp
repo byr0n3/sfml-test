@@ -2,10 +2,8 @@
 
 byrone::Tile::Tile() = default;
 
-byrone::Tile::Tile(byrone::TextureSheet *textureSheet, sf::Vector2f position) {
+byrone::Tile::Tile(byrone::TextureSheet *textureSheet, int spriteIdx, sf::Vector2f position) {
 	this->textureSheet = textureSheet;
+	this->updateSprite(spriteIdx);
 	this->setPosition(position);
-	this->setScale(2.0f, 2.0f);
-
-	this->updateSprite(0);
 }
