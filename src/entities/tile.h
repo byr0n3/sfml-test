@@ -5,6 +5,10 @@
 
 namespace byrone {
 	class Tile : public Entity {
+	public:
+		Tile();
+
+		explicit Tile(TextureSheet *textureSheet, sf::Vector2f position);
 	};
 }
 

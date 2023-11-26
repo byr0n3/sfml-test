@@ -1,8 +1,33 @@
 #include "game.h"
 #include "../exceptions/texture_load_exception.h"
 #include <SFML/Window/Event.hpp>
+#include <cmath>
 
 bool limitFrames = true;
+byrone::TextureSheet tileset;
+
+// @todo Tiles class?
+void generateFloor(byrone::Game *game) {
+	sf::Texture tilesetTexture;
+	if (!tilesetTexture.loadFromFile("../assets/tileset.png")) {
+		throw byrone::texture_load_exception("../assets/tileset.png");
+	}
+
+	sf::Vector2i tileSize(32, 32);
+	tileset = byrone::TextureSheet(tilesetTexture, tileSize);
+
+	int count = std::ceil(game->fWidth() / (float) (tileSize.x * 2));
+	float y = game->fHeight() - (float) (tileSize.y * 2);
+
+	game->tiles = std::vector<byrone::Tile>(count);
+
+	for (int i = 0; i < count; i++) {
+		sf::Vector2f position((tileSize.x * 2) * i, y);
+		byrone::Tile tile(&tileset, position);
+
+		game->tiles[i] = tile;
+	}
+}
 
 byrone::Game::Game(unsigned int width, unsigned int height) : width(width), height(height), open(true),
                                                               player() {
@@ -29,10 +54,7 @@ void byrone::Game::initialize() {
 
 	this->player.setPosition(sf::Vector2f(this->fWidth() / 2 - size.x, this->fHeight() / 2 - size.y));
 
-	sf::Vector2i tileSize(32, 32);
-	byrone::TextureSheet tileset("../assets/tileset.png", tileSize);
-
-	// @todo Calc amount of tiles to create and add them to the tiles vector
+	generateFloor(this);
 }
 
 void byrone::Game::handleEvents(sf::RenderWindow *window) {
@@ -80,6 +102,10 @@ void byrone::Game::render(sf::RenderWindow *window) {
 	window->clear(sf::Color::Blue);
 
 	window->draw(this->player);
+
+	for (const auto &tile: this->tiles) {
+		window->draw(tile);
+	}
 
 	// Swap buffers to display our new frame
 	window->display();

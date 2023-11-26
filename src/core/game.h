@@ -31,6 +31,8 @@ namespace byrone {
 
 		void cleanup();
 
+		std::vector<Tile> tiles;
+
 	private:
 		unsigned int width;
 
@@ -39,8 +41,6 @@ namespace byrone {
 		bool open;
 
 		Player player;
-
-		std::vector<Tile> tiles;
 	};
 }
 

@@ -19,9 +19,11 @@ namespace byrone {
 
 		void updateSprite(int x, int y, int width = 0, int height = 0);
 
-		virtual void handleInput() = 0;
+		virtual void handleInput() {
+		}
 
-		virtual void update(float deltaTime) = 0;
+		virtual void update(float deltaTime) {
+		}
 
 	protected:
 		sf::Color color;
