@@ -8,6 +8,8 @@ namespace byrone {
 	public:
 		TextureSheet();
 
+		TextureSheet(const char *filePath, sf::Vector2i size);
+
 		TextureSheet(const sf::Texture &texture, sf::Vector2i size);
 
 		sf::Texture *getTexture();

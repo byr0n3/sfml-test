@@ -1,17 +1,11 @@
 #include "player.h"
-#include "exceptions/texture_load_exception.h"
+#include "../exceptions/texture_load_exception.h"
 #include <SFML/Window/Keyboard.hpp>
 
 #define TEXTURE_PATH "../assets/textures/player.png"
 
 byrone::Player::Player(sf::Vector2f position) {
-	sf::Texture playerTexture;
-
-	if (!playerTexture.loadFromFile(TEXTURE_PATH)) {
-		throw texture_load_exception(TEXTURE_PATH);
-	}
-
-	this->textureSheet = new byrone::TextureSheet(playerTexture, {16, 16});
+	this->textureSheet = new byrone::TextureSheet(TEXTURE_PATH, {16, 16});
 
 	this->setPosition(position);
 	// 16 * 4 = 64

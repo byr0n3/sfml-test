@@ -1,6 +1,13 @@
 #include "texturesheet.h"
+#include "../exceptions/texture_load_exception.h"
 
 byrone::TextureSheet::TextureSheet() = default;
+
+byrone::TextureSheet::TextureSheet(const char *filePath, sf::Vector2i size) : size(size) {
+	if (!this->texture.loadFromFile(filePath)) {
+		throw texture_load_exception(filePath);
+	}
+}
 
 byrone::TextureSheet::TextureSheet(const sf::Texture &texture, sf::Vector2i size) : texture(texture), size(size) {
 }

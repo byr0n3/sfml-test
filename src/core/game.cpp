@@ -3,7 +3,6 @@
 #include <SFML/Window/Event.hpp>
 
 bool limitFrames = true;
-byrone::TextureSheet tileset;
 
 byrone::Game::Game(unsigned int width, unsigned int height) : width(width), height(height), open(true),
                                                               player() {
@@ -13,20 +12,12 @@ byrone::Game::~Game() {
 	this->cleanup();
 }
 
-unsigned int byrone::Game::getWidth() const {
-	return this->width;
-}
-
-unsigned int byrone::Game::getHeight() const {
-	return this->height;
-}
-
 float byrone::Game::fWidth() const {
-	return static_cast<float>(this->width);
+	return (float) this->width;
 }
 
 float byrone::Game::fHeight() const {
-	return static_cast<float>(this->height);
+	return (float) this->height;
 }
 
 bool byrone::Game::isOpen() const {
@@ -34,17 +25,14 @@ bool byrone::Game::isOpen() const {
 }
 
 void byrone::Game::initialize() {
-	sf::Texture playerTexture;
-
-	if (!playerTexture.loadFromFile("../assets/tileset.png")) {
-		throw texture_load_exception("../assets/tileset.png");
-	}
-
-	tileset = byrone::TextureSheet(playerTexture, {32, 32});
-
 	auto size = this->player.getSize();
 
 	this->player.setPosition(sf::Vector2f(this->fWidth() / 2 - size.x, this->fHeight() / 2 - size.y));
+
+	sf::Vector2i tileSize(32, 32);
+	byrone::TextureSheet tileset("../assets/tileset.png", tileSize);
+
+	// @todo Calc amount of tiles to create and add them to the tiles vector
 }
 
 void byrone::Game::handleEvents(sf::RenderWindow *window) {
@@ -92,23 +80,6 @@ void byrone::Game::render(sf::RenderWindow *window) {
 	window->clear(sf::Color::Blue);
 
 	window->draw(this->player);
-
-	sf::Vector2i size = tileset.getSize();
-	sf::Vector2f position(this->fWidth() / 2 - size.x, this->fHeight() - (size.y * 2));
-
-	sf::Sprite tile(*tileset.getTexture(), tileset.get(0));
-	tile.scale(2.0f, 2.0f);
-	tile.setPosition(position);
-
-	window->draw(tile);
-
-	tile.move(size.x + size.x, 0);
-
-	window->draw(tile);
-
-	tile.move(-(size.x + size.x + size.x + size.x), 0);
-
-	window->draw(tile);
 
 	// Swap buffers to display our new frame
 	window->display();

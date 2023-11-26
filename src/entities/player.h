@@ -1,8 +1,8 @@
 #ifndef BYRONE_PLAYER
 #define BYRONE_PLAYER
 
-#include "core/entity.h"
-#include "core/utilities.h"
+#include "../core/entity.h"
+#include "../core/utilities.h"
 
 namespace byrone {
 	class Player : public Entity {

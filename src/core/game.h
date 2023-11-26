@@ -3,7 +3,8 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include "entity.h"
-#include "../player.h"
+#include "../entities/player.h"
+#include "../entities/tile.h"
 
 namespace byrone {
 	class Game {
@@ -11,10 +12,6 @@ namespace byrone {
 		Game(unsigned int width, unsigned int height);
 
 		~Game();
-
-		[[nodiscard]] unsigned int getWidth() const;
-
-		[[nodiscard]] unsigned int getHeight() const;
 
 		[[nodiscard]] float fWidth() const;
 
@@ -42,6 +39,8 @@ namespace byrone {
 		bool open;
 
 		Player player;
+
+		std::vector<Tile> tiles;
 	};
 }
 
