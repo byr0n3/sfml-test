@@ -20,6 +20,7 @@ add_executable(sfml-test src/main.cpp
 
         src/exceptions/texture_load_exception.h
 
+        src/graphics/animation.h src/graphics/animation.cpp
         src/graphics/texturesheet.h src/graphics/texturesheet.cpp)
 target_link_libraries(sfml-test PRIVATE sfml-graphics)
 target_compile_features(sfml-test PRIVATE cxx_std_17)

@@ -4,6 +4,7 @@
 #define PLAYER_MOVE_SPEED 100.0f
 #define PLAYER_GRAVITY 100.0f
 
+#include <cstdint>
 #include "../core/entity.h"
 #include "../core/utilities.h"
 #include "tile.h"
