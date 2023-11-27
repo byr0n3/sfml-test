@@ -6,10 +6,21 @@
 namespace byrone {
 	class Animation {
 	public:
-		explicit Animation(TextureSheet *textureSheet);
+		Animation();
+
+		// @todo configurable max idx
+		explicit Animation(TextureSheet *textureSheet, float delay);
+
+		void update(const float &deltaTime);
+
+		[[nodiscard]] int getCurrentFrame() const;
 
 	private:
 		TextureSheet *textureSheet;
+		float delay;
+
+		int currentFrame;
+		float currentTime;
 	};
 }
 

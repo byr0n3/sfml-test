@@ -13,6 +13,9 @@ byrone::Player::Player(sf::Vector2f position) : flags(byrone::PlayerFlags::None)
 
 	// 16 * 2 = 32
 	this->setScale(2.0f, 2.0f);
+
+	// @todo
+	this->animation = byrone::Animation(this->textureSheet, 1.0f);
 }
 
 void byrone::Player::handleInput() {
@@ -33,6 +36,10 @@ void byrone::Player::handleInput() {
 // @todo Jumping
 // @todo Gravity
 void byrone::Player::update(const float &deltaTime, std::vector<byrone::Tile> *tiles) {
+	this->animation.update(deltaTime);
+
+	this->updateSprite(this->animation.getCurrentFrame());
+
 	if (!byrone::Flags::has<byrone::PlayerFlags, byrone::PlayerFlags::Grounded>(this->flags) && this->input.y == 0) {
 		this->input.y = 1;
 	}
@@ -43,7 +50,7 @@ void byrone::Player::update(const float &deltaTime, std::vector<byrone::Tile> *t
 
 	sf::Vector2i size = this->getSize();
 	sf::Vector2f movement = {(float) this->input.x * PLAYER_MOVE_SPEED,
-							 (float) this->input.y * (this->input.y < 0 ? PLAYER_GRAVITY * 0.9f : PLAYER_GRAVITY)};
+	                         (float) this->input.y * (this->input.y < 0 ? PLAYER_GRAVITY * 0.9f : PLAYER_GRAVITY)};
 
 	sf::Vector2f targetPosition = this->getPosition() + (movement * deltaTime);
 	this->input = VECTOR2I_ZERO;
@@ -60,12 +67,12 @@ void byrone::Player::update(const float &deltaTime, std::vector<byrone::Tile> *t
 
 		// don't check tiles that are out of range
 		if ((diffX < -size.x || diffX > size.x) ||
-			(diffY < -size.y || diffY > size.y)) {
+		    (diffY < -size.y || diffY > size.y)) {
 			continue;
 		}
 
 		if ((diffX >= -size.x && diffX <= size.x) &&
-			(diffY >= -size.y && diffY <= size.y)) {
+		    (diffY >= -size.y && diffY <= size.y)) {
 			byrone::Flags::add<byrone::PlayerFlags, byrone::PlayerFlags::Grounded>(this->flags);
 		}
 

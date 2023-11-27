@@ -8,6 +8,7 @@
 #include "../core/entity.h"
 #include "../core/utilities.h"
 #include "tile.h"
+#include "../graphics/animation.h"
 
 namespace byrone {
 	enum PlayerFlags : int16_t {
@@ -25,6 +26,7 @@ namespace byrone {
 
 	private:
 		PlayerFlags flags;
+		Animation animation;
 		sf::Vector2i input;
 	};
 }
