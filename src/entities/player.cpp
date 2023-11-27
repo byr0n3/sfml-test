@@ -16,14 +16,6 @@ byrone::Player::Player(sf::Vector2f position) : flags(byrone::PlayerFlags::None)
 }
 
 void byrone::Player::handleInput() {
-	// @todo TEMP REMOVE
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-		this->input.y -= 1;
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-		this->input.y += 1;
-	}
-
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 		this->input.x -= 1;
 	}
@@ -31,17 +23,27 @@ void byrone::Player::handleInput() {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
 		this->input.x += 1;
 	}
+
+	// @todo Only on key down, not hold
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+		this->input.y -= 1;
+	}
 }
 
 // @todo Jumping
 // @todo Gravity
 void byrone::Player::update(const float &deltaTime, std::vector<byrone::Tile> *tiles) {
+	if (!byrone::Flags::has<byrone::PlayerFlags, byrone::PlayerFlags::Grounded>(this->flags) && this->input.y == 0) {
+		this->input.y = 1;
+	}
+
 	if (this->input == VECTOR2I_ZERO) {
 		return;
 	}
 
 	sf::Vector2i size = this->getSize();
-	sf::Vector2f movement = {(float) this->input.x * PLAYER_MOVE_SPEED, (float) this->input.y * PLAYER_MOVE_SPEED};
+	sf::Vector2f movement = {(float) this->input.x * PLAYER_MOVE_SPEED,
+							 (float) this->input.y * (this->input.y < 0 ? PLAYER_GRAVITY * 0.9f : PLAYER_GRAVITY)};
 
 	sf::Vector2f targetPosition = this->getPosition() + (movement * deltaTime);
 	this->input = VECTOR2I_ZERO;
