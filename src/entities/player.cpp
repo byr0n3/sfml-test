@@ -1,11 +1,12 @@
 #include "player.h"
 #include "../exceptions/texture_load_exception.h"
+#include "../core/flags.h"
 #include <SFML/Window/Keyboard.hpp>
 
 #define TEXTURE_TILE_SIZE sf::Vector2i(16, 16)
 #define TEXTURE_PATH "../assets/textures/player.png"
 
-byrone::Player::Player(sf::Vector2f position) {
+byrone::Player::Player(sf::Vector2f position) : flags(byrone::PlayerFlags::None) {
 	this->textureSheet = new byrone::TextureSheet(TEXTURE_PATH, TEXTURE_TILE_SIZE);
 	this->updateSprite(0);
 	this->setPosition(position);
@@ -34,7 +35,6 @@ void byrone::Player::handleInput() {
 
 // @todo Jumping
 // @todo Gravity
-// @todo Grounded check
 void byrone::Player::update(const float &deltaTime, std::vector<byrone::Tile> *tiles) {
 	if (this->input == VECTOR2I_ZERO) {
 		return;
@@ -48,19 +48,27 @@ void byrone::Player::update(const float &deltaTime, std::vector<byrone::Tile> *t
 
 	sf::FloatRect playerRect(targetPosition.x, targetPosition.y, size.x, size.y);
 
+	byrone::Flags::remove<byrone::PlayerFlags, byrone::PlayerFlags::Grounded>(this->flags);
+
 	for (const auto &tile: *tiles) {
 		sf::Vector2f diff = tile.getPosition() - targetPosition;
 
+		int diffX = (int) diff.x;
+		int diffY = (int) diff.y;
+
 		// don't check tiles that are out of range
-		if ((diff.x < -size.x || diff.x > size.x) ||
-			(diff.y < -size.y || diff.y > size.y)) {
+		if ((diffX < -size.x || diffX > size.x) ||
+			(diffY < -size.y || diffY > size.y)) {
 			continue;
 		}
 
-		auto bounds = tile.getGlobalBounds();
+		if ((diffX >= -size.x && diffX <= size.x) &&
+			(diffY >= -size.y && diffY <= size.y)) {
+			byrone::Flags::add<byrone::PlayerFlags, byrone::PlayerFlags::Grounded>(this->flags);
+		}
 
 		// if the target position is in a tile, don't move
-		if (bounds.intersects(playerRect)) {
+		if (tile.getGlobalBounds().intersects(playerRect)) {
 			return;
 		}
 	}

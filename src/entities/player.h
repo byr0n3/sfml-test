@@ -8,6 +8,11 @@
 #include "tile.h"
 
 namespace byrone {
+	enum PlayerFlags : int16_t {
+		None = 0,
+		Grounded = (1 << 0),
+	};
+
 	class Player : public Entity {
 	public:
 		explicit Player(sf::Vector2f position = VECTOR2F_ZERO);
@@ -17,6 +22,7 @@ namespace byrone {
 		void update(const float &deltaTime, std::vector<Tile> *tiles);
 
 	private:
+		PlayerFlags flags;
 		sf::Vector2i input;
 	};
 }

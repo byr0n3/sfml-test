@@ -55,8 +55,8 @@ bool byrone::Game::isOpen() const {
 void byrone::Game::initialize() {
 	sf::Vector2i size = this->player.getSize();
 
-	// skip a tile on Y axis
-	this->player.setPosition(sf::Vector2f(0.0f, this->fHeight() - (size.y * 2.0f)));
+	// skip a tile on X and Y axis
+	this->player.setPosition(sf::Vector2f(size.x * 2.0f, this->fHeight() - (size.y * 2.0f)));
 
 	generateFloor(this);
 }

@@ -12,15 +12,15 @@ FetchContent_MakeAvailable(SFML)
 add_executable(sfml-test src/main.cpp
         src/core/game.h src/core/game.cpp
         src/core/entity.h src/core/entity.cpp
+        src/core/flags.h
         src/core/utilities.h
 
         src/entities/player.h src/entities/player.cpp
+        src/entities/tile.h src/entities/tile.cpp
 
         src/exceptions/texture_load_exception.h
 
-        src/graphics/texturesheet.h src/graphics/texturesheet.cpp
-        src/entities/tile.cpp
-        src/entities/tile.h)
+        src/graphics/texturesheet.h src/graphics/texturesheet.cpp)
 target_link_libraries(sfml-test PRIVATE sfml-graphics)
 target_compile_features(sfml-test PRIVATE cxx_std_17)
 
