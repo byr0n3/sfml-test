@@ -21,7 +21,7 @@ std::string getMetricsLabel(sf::Time deltaTime) {
 
 	// @todo FPS calc might be slightly off
 	return "FPS: " + std::to_string((int) (1 / ms * 1000)) +
-	       " | Frame time: " + msStr + "ms";
+		   " | Frame time: " + msStr + "ms";
 }
 
 int main() {

@@ -8,16 +8,16 @@ namespace byrone {
 	public:
 		Animation();
 
-		// @todo configurable max idx
-		explicit Animation(TextureSheet *textureSheet, float delay);
+		explicit Animation(float delay, int startFrame, int endFrame);
 
 		void update(const float &deltaTime);
 
 		[[nodiscard]] int getCurrentFrame() const;
 
 	private:
-		TextureSheet *textureSheet;
 		float delay;
+		int startFrame;
+		int endFrame;
 
 		int currentFrame;
 		float currentTime;

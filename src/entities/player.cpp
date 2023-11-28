@@ -5,6 +5,7 @@
 
 #define TEXTURE_TILE_SIZE sf::Vector2i(16, 16)
 #define TEXTURE_PATH "../assets/textures/player.png"
+#define TEXTURE_SCALE 2.0f
 
 byrone::Player::Player(sf::Vector2f position) : flags(byrone::PlayerFlags::None) {
 	this->textureSheet = new byrone::TextureSheet(TEXTURE_PATH, TEXTURE_TILE_SIZE);
@@ -12,10 +13,10 @@ byrone::Player::Player(sf::Vector2f position) : flags(byrone::PlayerFlags::None)
 	this->setPosition(position);
 
 	// 16 * 2 = 32
-	this->setScale(2.0f, 2.0f);
+	this->setScale(TEXTURE_SCALE, TEXTURE_SCALE);
 
-	// @todo
-	this->animation = byrone::Animation(this->textureSheet, 1.0f);
+	this->idleAnimation = byrone::Animation(0.5f, 0, 1);
+	this->walkAnimation = byrone::Animation(0.1f, 6, 11);
 }
 
 void byrone::Player::handleInput() {
@@ -36,9 +37,17 @@ void byrone::Player::handleInput() {
 // @todo Jumping
 // @todo Gravity
 void byrone::Player::update(const float &deltaTime, std::vector<byrone::Tile> *tiles) {
-	this->animation.update(deltaTime);
+	if (this->input.x != 0) {
+		this->walkAnimation.update(deltaTime);
 
-	this->updateSprite(this->animation.getCurrentFrame());
+		this->updateSprite(this->walkAnimation.getCurrentFrame());
+
+		// @todo Get flipped sprites for X axis
+	} else {
+		this->idleAnimation.update(deltaTime);
+
+		this->updateSprite(this->idleAnimation.getCurrentFrame());
+	}
 
 	if (!byrone::Flags::has<byrone::PlayerFlags, byrone::PlayerFlags::Grounded>(this->flags) && this->input.y == 0) {
 		this->input.y = 1;
@@ -50,7 +59,7 @@ void byrone::Player::update(const float &deltaTime, std::vector<byrone::Tile> *t
 
 	sf::Vector2i size = this->getSize();
 	sf::Vector2f movement = {(float) this->input.x * PLAYER_MOVE_SPEED,
-	                         (float) this->input.y * (this->input.y < 0 ? PLAYER_GRAVITY * 0.9f : PLAYER_GRAVITY)};
+							 (float) this->input.y * (this->input.y < 0 ? PLAYER_GRAVITY * 0.9f : PLAYER_GRAVITY)};
 
 	sf::Vector2f targetPosition = this->getPosition() + (movement * deltaTime);
 	this->input = VECTOR2I_ZERO;
@@ -67,12 +76,12 @@ void byrone::Player::update(const float &deltaTime, std::vector<byrone::Tile> *t
 
 		// don't check tiles that are out of range
 		if ((diffX < -size.x || diffX > size.x) ||
-		    (diffY < -size.y || diffY > size.y)) {
+			(diffY < -size.y || diffY > size.y)) {
 			continue;
 		}
 
 		if ((diffX >= -size.x && diffX <= size.x) &&
-		    (diffY >= -size.y && diffY <= size.y)) {
+			(diffY >= -size.y && diffY <= size.y)) {
 			byrone::Flags::add<byrone::PlayerFlags, byrone::PlayerFlags::Grounded>(this->flags);
 		}
 
