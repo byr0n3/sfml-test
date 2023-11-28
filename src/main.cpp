@@ -6,12 +6,12 @@
 #define SCREEN_HEIGHT 540
 
 std::string getMetricsLabel(sf::Time deltaTime) {
-	auto ms = deltaTime.asSeconds() * 1000;
+	float ms = deltaTime.asSeconds() * 1000;
 
-	auto msStr = std::to_string(ms);
+	std::string msStr = std::to_string(ms);
 
 	// the warning made me go mad sorry for cast
-	for (auto i = (int) msStr.length() - 1; i >= 0; i--) {
+	for (int i = (int) msStr.length() - 1; i >= 0; i--) {
 		if (msStr[i] != '0') {
 			break;
 		}
@@ -25,7 +25,7 @@ std::string getMetricsLabel(sf::Time deltaTime) {
 }
 
 int main() {
-	auto screenSize = sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT);
+	sf::VideoMode screenSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	// @todo Use 3.3?
 	sf::ContextSettings settings(0, 0, 16, 2, 1);

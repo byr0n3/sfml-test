@@ -8,7 +8,7 @@
 #include "../core/entity.h"
 #include "../core/utilities.h"
 #include "tile.h"
-#include "../graphics/animation.h"
+#include "../graphics/animation_controller.h"
 
 namespace byrone {
 	enum PlayerFlags : int16_t {
@@ -27,13 +27,10 @@ namespace byrone {
 
 	private:
 		PlayerFlags flags;
-
-		Animation idleLeftAnimation;
-		Animation idleRightAnimation;
-		Animation walkLeftAnimation;
-		Animation walkRightAnimation;
-
+		AnimationController animations;
 		sf::Vector2i input;
+
+		void updateAnimation();
 	};
 }
 

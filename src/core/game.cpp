@@ -63,7 +63,7 @@ void byrone::Game::initialize() {
 
 void byrone::Game::handleEvents(sf::RenderWindow *window) {
 	// handle every event
-	for (auto event = sf::Event(); window->pollEvent(event);) {
+	for (sf::Event event = sf::Event(); window->pollEvent(event);) {
 		switch (event.type) {
 			case sf::Event::Closed: {
 				this->open = false;
@@ -105,7 +105,7 @@ void byrone::Game::render(sf::RenderWindow *window) {
 	// Clear every rendered pixel in the previous frame
 	window->clear(sf::Color::Blue);
 
-	for (const auto &tile: this->tiles) {
+	for (const byrone::Tile &tile: this->tiles) {
 		window->draw(tile);
 	}
 

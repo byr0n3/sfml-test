@@ -15,10 +15,11 @@ byrone::Player::Player(sf::Vector2f position) : flags(byrone::PlayerFlags::None)
 	// 16 * 2 = 32
 	this->setScale(TEXTURE_SCALE, TEXTURE_SCALE);
 
-	this->idleLeftAnimation = byrone::Animation(0.5f, 3, 4);
-	this->idleRightAnimation = byrone::Animation(0.5f, 0, 1);
-	this->walkLeftAnimation = byrone::Animation(0.1f, 12, 17);
-	this->walkRightAnimation = byrone::Animation(0.1f, 6, 11);
+	this->animations = byrone::AnimationController();
+	this->animations.add(byrone::Animation(0.5f, 3, 4));
+	this->animations.add(byrone::Animation(0.5f, 0, 1));
+	this->animations.add(byrone::Animation(0.1f, 12, 17));
+	this->animations.add(byrone::Animation(0.1f, 6, 11));
 }
 
 void byrone::Player::handleInput() {
@@ -39,31 +40,16 @@ void byrone::Player::handleInput() {
 // @todo Jumping
 // @todo Gravity
 void byrone::Player::update(const float &deltaTime, std::vector<byrone::Tile> *tiles) {
-	if (this->input.x != 0) {
-		if (this->input.x > 0) {
-			byrone::Flags::remove<byrone::PlayerFlags, byrone::PlayerFlags::Flipped>(this->flags);
-
-			this->walkRightAnimation.update(deltaTime);
-
-			this->updateSprite(this->walkRightAnimation.getCurrentFrame());
-		} else {
-			byrone::Flags::add<byrone::PlayerFlags, byrone::PlayerFlags::Flipped>(this->flags);
-
-			this->walkLeftAnimation.update(deltaTime);
-
-			this->updateSprite(this->walkLeftAnimation.getCurrentFrame());
-		}
-	} else {
-		if (byrone::Flags::has<byrone::PlayerFlags, byrone::PlayerFlags::Flipped>(this->flags)) {
-			this->idleLeftAnimation.update(deltaTime);
-
-			this->updateSprite(this->idleLeftAnimation.getCurrentFrame());
-		} else {
-			this->idleRightAnimation.update(deltaTime);
-
-			this->updateSprite(this->idleRightAnimation.getCurrentFrame());
-		}
+	if (this->input.x < 0) {
+		byrone::Flags::add<byrone::PlayerFlags, byrone::PlayerFlags::Flipped>(this->flags);
+	} else if (this->input.x > 0) {
+		byrone::Flags::remove<byrone::PlayerFlags, byrone::PlayerFlags::Flipped>(this->flags);
 	}
+
+	this->updateAnimation();
+
+	this->animations.update(deltaTime);
+	this->updateSprite(this->animations.getCurrentFrame());
 
 	if (!byrone::Flags::has<byrone::PlayerFlags, byrone::PlayerFlags::Grounded>(this->flags) && this->input.y == 0) {
 		this->input.y = 1;
@@ -75,7 +61,7 @@ void byrone::Player::update(const float &deltaTime, std::vector<byrone::Tile> *t
 
 	sf::Vector2i size = this->getSize();
 	sf::Vector2f movement = {(float) this->input.x * PLAYER_MOVE_SPEED,
-	                         (float) this->input.y * (this->input.y < 0 ? PLAYER_GRAVITY * 0.9f : PLAYER_GRAVITY)};
+							 (float) this->input.y * (this->input.y < 0 ? PLAYER_GRAVITY * 0.9f : PLAYER_GRAVITY)};
 
 	sf::Vector2f targetPosition = this->getPosition() + (movement * deltaTime);
 	this->input = VECTOR2I_ZERO;
@@ -84,7 +70,7 @@ void byrone::Player::update(const float &deltaTime, std::vector<byrone::Tile> *t
 
 	byrone::Flags::remove<byrone::PlayerFlags, byrone::PlayerFlags::Grounded>(this->flags);
 
-	for (const auto &tile: *tiles) {
+	for (const byrone::Tile &tile: *tiles) {
 		sf::Vector2f diff = tile.getPosition() - targetPosition;
 
 		int diffX = (int) diff.x;
@@ -92,12 +78,12 @@ void byrone::Player::update(const float &deltaTime, std::vector<byrone::Tile> *t
 
 		// don't check tiles that are out of range
 		if ((diffX < -size.x || diffX > size.x) ||
-		    (diffY < -size.y || diffY > size.y)) {
+			(diffY < -size.y || diffY > size.y)) {
 			continue;
 		}
 
 		if ((diffX >= -size.x && diffX <= size.x) &&
-		    (diffY >= -size.y && diffY <= size.y)) {
+			(diffY >= -size.y && diffY <= size.y)) {
 			byrone::Flags::add<byrone::PlayerFlags, byrone::PlayerFlags::Grounded>(this->flags);
 		}
 
@@ -108,4 +94,16 @@ void byrone::Player::update(const float &deltaTime, std::vector<byrone::Tile> *t
 	}
 
 	this->setPosition(targetPosition);
+}
+
+void byrone::Player::updateAnimation() {
+	if (this->input.x == 0) {
+		bool flipped = byrone::Flags::has<byrone::PlayerFlags, byrone::PlayerFlags::Flipped>(this->flags);
+
+		this->animations.set(flipped ? 0 : 1);
+
+		return;
+	}
+
+	this->animations.set(this->input.x < 0 ? 2 : 3);
 }

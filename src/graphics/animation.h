@@ -4,23 +4,16 @@
 #include "texturesheet.h"
 
 namespace byrone {
-	class Animation {
+	struct Animation {
 	public:
-		Animation();
+		Animation() = default;
 
-		explicit Animation(float delay, int startFrame, int endFrame);
+		explicit Animation(float delay, int startFrame, int endFrame) : delay(delay), end(endFrame), start(startFrame) {
+		}
 
-		void update(const float &deltaTime);
-
-		[[nodiscard]] int getCurrentFrame() const;
-
-	private:
 		float delay;
-		int startFrame;
-		int endFrame;
-
-		int currentFrame;
-		float currentTime;
+		int start;
+		int end;
 	};
 }
 

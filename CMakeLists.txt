@@ -10,9 +10,9 @@ FetchContent_Declare(SFML GIT_REPOSITORY https://github.com/SFML/SFML.git GIT_TA
 FetchContent_MakeAvailable(SFML)
 
 add_executable(sfml-test src/main.cpp
-        src/core/game.h src/core/game.cpp
         src/core/entity.h src/core/entity.cpp
         src/core/flags.h
+        src/core/game.h src/core/game.cpp
         src/core/utilities.h
 
         src/entities/player.h src/entities/player.cpp
@@ -20,7 +20,8 @@ add_executable(sfml-test src/main.cpp
 
         src/exceptions/texture_load_exception.h
 
-        src/graphics/animation.h src/graphics/animation.cpp
+        src/graphics/animation.h
+        src/graphics/animation_controller.h src/graphics/animation_controller.cpp
         src/graphics/texturesheet.h src/graphics/texturesheet.cpp)
 target_link_libraries(sfml-test PRIVATE sfml-graphics)
 target_compile_features(sfml-test PRIVATE cxx_std_17)
