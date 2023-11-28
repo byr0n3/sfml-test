@@ -16,7 +16,8 @@ byrone::Player::Player(sf::Vector2f position) : flags(byrone::PlayerFlags::None)
 	this->setScale(TEXTURE_SCALE, TEXTURE_SCALE);
 
 	this->idleAnimation = byrone::Animation(0.5f, 0, 1);
-	this->walkAnimation = byrone::Animation(0.1f, 6, 11);
+	this->walkLeftAnimation = byrone::Animation(0.1f, 12, 17);
+	this->walkRightAnimation = byrone::Animation(0.1f, 6, 11);
 }
 
 void byrone::Player::handleInput() {
@@ -38,11 +39,15 @@ void byrone::Player::handleInput() {
 // @todo Gravity
 void byrone::Player::update(const float &deltaTime, std::vector<byrone::Tile> *tiles) {
 	if (this->input.x != 0) {
-		this->walkAnimation.update(deltaTime);
+		if (this->input.x > 0) {
+			this->walkRightAnimation.update(deltaTime);
 
-		this->updateSprite(this->walkAnimation.getCurrentFrame());
+			this->updateSprite(this->walkRightAnimation.getCurrentFrame());
+		} else {
+			this->walkLeftAnimation.update(deltaTime);
 
-		// @todo Get flipped sprites for X axis
+			this->updateSprite(this->walkLeftAnimation.getCurrentFrame());
+		}
 	} else {
 		this->idleAnimation.update(deltaTime);
 
@@ -59,7 +64,7 @@ void byrone::Player::update(const float &deltaTime, std::vector<byrone::Tile> *t
 
 	sf::Vector2i size = this->getSize();
 	sf::Vector2f movement = {(float) this->input.x * PLAYER_MOVE_SPEED,
-							 (float) this->input.y * (this->input.y < 0 ? PLAYER_GRAVITY * 0.9f : PLAYER_GRAVITY)};
+	                         (float) this->input.y * (this->input.y < 0 ? PLAYER_GRAVITY * 0.9f : PLAYER_GRAVITY)};
 
 	sf::Vector2f targetPosition = this->getPosition() + (movement * deltaTime);
 	this->input = VECTOR2I_ZERO;
@@ -76,12 +81,12 @@ void byrone::Player::update(const float &deltaTime, std::vector<byrone::Tile> *t
 
 		// don't check tiles that are out of range
 		if ((diffX < -size.x || diffX > size.x) ||
-			(diffY < -size.y || diffY > size.y)) {
+		    (diffY < -size.y || diffY > size.y)) {
 			continue;
 		}
 
 		if ((diffX >= -size.x && diffX <= size.x) &&
-			(diffY >= -size.y && diffY <= size.y)) {
+		    (diffY >= -size.y && diffY <= size.y)) {
 			byrone::Flags::add<byrone::PlayerFlags, byrone::PlayerFlags::Grounded>(this->flags);
 		}
 

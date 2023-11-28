@@ -28,7 +28,8 @@ namespace byrone {
 		PlayerFlags flags;
 
 		Animation idleAnimation;
-		Animation walkAnimation;
+		Animation walkLeftAnimation;
+		Animation walkRightAnimation;
 
 		sf::Vector2i input;
 	};
