@@ -15,7 +15,8 @@ byrone::Player::Player(sf::Vector2f position) : flags(byrone::PlayerFlags::None)
 	// 16 * 2 = 32
 	this->setScale(TEXTURE_SCALE, TEXTURE_SCALE);
 
-	this->idleAnimation = byrone::Animation(0.5f, 0, 1);
+	this->idleLeftAnimation = byrone::Animation(0.5f, 3, 4);
+	this->idleRightAnimation = byrone::Animation(0.5f, 0, 1);
 	this->walkLeftAnimation = byrone::Animation(0.1f, 12, 17);
 	this->walkRightAnimation = byrone::Animation(0.1f, 6, 11);
 }
@@ -40,18 +41,28 @@ void byrone::Player::handleInput() {
 void byrone::Player::update(const float &deltaTime, std::vector<byrone::Tile> *tiles) {
 	if (this->input.x != 0) {
 		if (this->input.x > 0) {
+			byrone::Flags::remove<byrone::PlayerFlags, byrone::PlayerFlags::Flipped>(this->flags);
+
 			this->walkRightAnimation.update(deltaTime);
 
 			this->updateSprite(this->walkRightAnimation.getCurrentFrame());
 		} else {
+			byrone::Flags::add<byrone::PlayerFlags, byrone::PlayerFlags::Flipped>(this->flags);
+
 			this->walkLeftAnimation.update(deltaTime);
 
 			this->updateSprite(this->walkLeftAnimation.getCurrentFrame());
 		}
 	} else {
-		this->idleAnimation.update(deltaTime);
+		if (byrone::Flags::has<byrone::PlayerFlags, byrone::PlayerFlags::Flipped>(this->flags)) {
+			this->idleLeftAnimation.update(deltaTime);
 
-		this->updateSprite(this->idleAnimation.getCurrentFrame());
+			this->updateSprite(this->idleLeftAnimation.getCurrentFrame());
+		} else {
+			this->idleRightAnimation.update(deltaTime);
+
+			this->updateSprite(this->idleRightAnimation.getCurrentFrame());
+		}
 	}
 
 	if (!byrone::Flags::has<byrone::PlayerFlags, byrone::PlayerFlags::Grounded>(this->flags) && this->input.y == 0) {

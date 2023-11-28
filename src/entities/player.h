@@ -13,7 +13,8 @@
 namespace byrone {
 	enum PlayerFlags : int16_t {
 		None = 0,
-		Grounded = (1 << 0),
+		Flipped = (1 << 0),
+		Grounded = (1 << 1),
 	};
 
 	class Player : public Entity {
@@ -27,7 +28,8 @@ namespace byrone {
 	private:
 		PlayerFlags flags;
 
-		Animation idleAnimation;
+		Animation idleLeftAnimation;
+		Animation idleRightAnimation;
 		Animation walkLeftAnimation;
 		Animation walkRightAnimation;
 
