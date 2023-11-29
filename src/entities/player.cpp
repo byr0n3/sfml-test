@@ -51,6 +51,7 @@ void byrone::Player::update(const float &deltaTime, std::vector<byrone::Tile> *t
 	this->updateSprite(this->animations.getCurrentFrame());
 
 	if (!byrone::Flags::has<byrone::PlayerFlags, byrone::PlayerFlags::Grounded>(this->flags)) {
+		// @todo (PLAYER_GRAVITY_ACCEL * deltaTime) because gravity
 		this->velocity.y += PLAYER_GRAVITY_ACCEL;
 
 		if (this->velocity.y >= PLAYER_GRAVITY_MAX) {
