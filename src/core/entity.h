@@ -21,7 +21,7 @@ namespace byrone {
 
 		virtual sf::Vector2i getSize() const;
 
-		virtual void handleInput() {
+		virtual void handleInput(const float &deltaTime) {
 		}
 
 		virtual void update(const float &deltaTime) {

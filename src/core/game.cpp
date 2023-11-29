@@ -93,11 +93,11 @@ void byrone::Game::handleEvents(sf::RenderWindow *window) {
 	}
 }
 
-void byrone::Game::handleInput() {
-	this->player.handleInput();
+void byrone::Game::handleInput(const float &deltaTime) {
+	this->player.handleInput(deltaTime);
 }
 
-void byrone::Game::update(float deltaTime) {
+void byrone::Game::update(const float &deltaTime) {
 	this->player.update(deltaTime, &this->tiles);
 }
 

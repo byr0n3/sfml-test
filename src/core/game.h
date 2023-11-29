@@ -23,9 +23,9 @@ namespace byrone {
 
 		void handleEvents(sf::RenderWindow *window);
 
-		void handleInput();
+		void handleInput(const float &deltaTime);
 
-		void update(float deltaTime);
+		void update(const float &deltaTime);
 
 		void render(sf::RenderWindow *window);
 

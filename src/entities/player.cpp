@@ -22,27 +22,26 @@ byrone::Player::Player(sf::Vector2f position) : flags(byrone::PlayerFlags::None)
 	this->animations.add(byrone::Animation(0.1f, 6, 11));
 }
 
-void byrone::Player::handleInput() {
+void byrone::Player::handleInput(const float &deltaTime) {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-		this->input.x -= 1;
+		this->velocity.x -= PLAYER_MOVE_SPEED;
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-		this->input.x += 1;
+		this->velocity.x += PLAYER_MOVE_SPEED;
 	}
 
 	// @todo Only on key down, not hold
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-		this->input.y -= 1;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) &&
+		byrone::Flags::has<byrone::PlayerFlags, byrone::PlayerFlags::Grounded>(this->flags)) {
+		this->velocity.y -= PLAYER_JUMP_VELOCITY;
 	}
 }
 
-// @todo Jumping
-// @todo Gravity
 void byrone::Player::update(const float &deltaTime, std::vector<byrone::Tile> *tiles) {
-	if (this->input.x < 0) {
+	if (this->velocity.x < 0) {
 		byrone::Flags::add<byrone::PlayerFlags, byrone::PlayerFlags::Flipped>(this->flags);
-	} else if (this->input.x > 0) {
+	} else if (this->velocity.x > 0) {
 		byrone::Flags::remove<byrone::PlayerFlags, byrone::PlayerFlags::Flipped>(this->flags);
 	}
 
@@ -51,20 +50,22 @@ void byrone::Player::update(const float &deltaTime, std::vector<byrone::Tile> *t
 	this->animations.update(deltaTime);
 	this->updateSprite(this->animations.getCurrentFrame());
 
-	if (!byrone::Flags::has<byrone::PlayerFlags, byrone::PlayerFlags::Grounded>(this->flags) && this->input.y == 0) {
-		this->input.y = 1;
+	if (!byrone::Flags::has<byrone::PlayerFlags, byrone::PlayerFlags::Grounded>(this->flags)) {
+		this->velocity.y += PLAYER_GRAVITY_ACCEL;
+
+		if (this->velocity.y >= PLAYER_GRAVITY_MAX) {
+			this->velocity.y = PLAYER_GRAVITY_MAX;
+		}
 	}
 
-	if (this->input == VECTOR2I_ZERO) {
+	if (this->velocity == VECTOR2F_ZERO) {
 		return;
 	}
 
 	sf::Vector2i size = this->getSize();
-	sf::Vector2f movement = {(float) this->input.x * PLAYER_MOVE_SPEED,
-							 (float) this->input.y * (this->input.y < 0 ? PLAYER_GRAVITY * 0.9f : PLAYER_GRAVITY)};
 
-	sf::Vector2f targetPosition = this->getPosition() + (movement * deltaTime);
-	this->input = VECTOR2I_ZERO;
+	sf::Vector2f targetPosition = this->getPosition() + (this->velocity * deltaTime);
+	this->velocity.x = 0.0f;
 
 	sf::FloatRect playerRect(targetPosition.x, targetPosition.y, size.x, size.y);
 
@@ -85,6 +86,8 @@ void byrone::Player::update(const float &deltaTime, std::vector<byrone::Tile> *t
 		if ((diffX >= -size.x && diffX <= size.x) &&
 			(diffY >= -size.y && diffY <= size.y)) {
 			byrone::Flags::add<byrone::PlayerFlags, byrone::PlayerFlags::Grounded>(this->flags);
+
+			this->velocity.y = 0.0f;
 		}
 
 		// if the target position is in a tile, don't move
@@ -97,7 +100,7 @@ void byrone::Player::update(const float &deltaTime, std::vector<byrone::Tile> *t
 }
 
 void byrone::Player::updateAnimation() {
-	if (this->input.x == 0) {
+	if (this->velocity.x == 0) {
 		bool flipped = byrone::Flags::has<byrone::PlayerFlags, byrone::PlayerFlags::Flipped>(this->flags);
 
 		this->animations.set(flipped ? 0 : 1);
@@ -105,5 +108,5 @@ void byrone::Player::updateAnimation() {
 		return;
 	}
 
-	this->animations.set(this->input.x < 0 ? 2 : 3);
+	this->animations.set(this->velocity.x < 0 ? 2 : 3);
 }

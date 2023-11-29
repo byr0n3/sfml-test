@@ -53,7 +53,7 @@ int main() {
 		game.handleEvents(&window);
 
 		if (window.hasFocus()) {
-			game.handleInput();
+			game.handleInput(deltaTime.asSeconds());
 		}
 
 		// @todo Only when focus?

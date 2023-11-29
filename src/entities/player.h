@@ -2,12 +2,14 @@
 #define BYRONE_PLAYER
 
 #define PLAYER_MOVE_SPEED 100.0f
-#define PLAYER_GRAVITY 100.0f
+#define PLAYER_GRAVITY_MAX 200.0f
+#define PLAYER_GRAVITY_ACCEL (PLAYER_GRAVITY_MAX / 10.0f)
+#define PLAYER_JUMP_VELOCITY (PLAYER_GRAVITY_MAX * 2.0f)
 
 #include <cstdint>
+#include "tile.h"
 #include "../core/entity.h"
 #include "../core/utilities.h"
-#include "tile.h"
 #include "../graphics/animation_controller.h"
 
 namespace byrone {
@@ -21,14 +23,14 @@ namespace byrone {
 	public:
 		explicit Player(sf::Vector2f position = VECTOR2F_ZERO);
 
-		void handleInput() override;
+		void handleInput(const float &deltaTime) override;
 
 		void update(const float &deltaTime, std::vector<Tile> *tiles);
 
 	private:
 		PlayerFlags flags;
 		AnimationController animations;
-		sf::Vector2i input;
+		sf::Vector2f velocity;
 
 		void updateAnimation();
 	};
