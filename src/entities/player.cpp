@@ -1,5 +1,5 @@
 #include "player.h"
-#include "../exceptions/texture_load_exception.h"
+#include "../exceptions/load_file_exception.h"
 #include "../core/flags.h"
 #include <SFML/Window/Keyboard.hpp>
 
@@ -38,7 +38,7 @@ void byrone::Player::handleInput(const float &deltaTime) {
 	}
 }
 
-void byrone::Player::update(const float &deltaTime, std::vector<byrone::Tile> *tiles) {
+void byrone::Player::update(const float &deltaTime, byrone::Level *level) {
 	if (this->velocity.x < 0) {
 		byrone::Flags::add<byrone::PlayerFlags, byrone::PlayerFlags::Flipped>(this->flags);
 	} else if (this->velocity.x > 0) {
@@ -72,7 +72,7 @@ void byrone::Player::update(const float &deltaTime, std::vector<byrone::Tile> *t
 
 	byrone::Flags::remove<byrone::PlayerFlags, byrone::PlayerFlags::Grounded>(this->flags);
 
-	for (const byrone::Tile &tile: *tiles) {
+	for (const byrone::Tile &tile: *level->getTiles()) {
 		sf::Vector2f diff = tile.getPosition() - targetPosition;
 
 		int diffX = (int) diff.x;

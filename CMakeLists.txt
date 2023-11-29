@@ -13,12 +13,13 @@ add_executable(sfml-test src/main.cpp
         src/core/entity.h src/core/entity.cpp
         src/core/flags.h
         src/core/game.h src/core/game.cpp
+        src/core/level.h src/core/level.cpp
         src/core/utilities.h
 
         src/entities/player.h src/entities/player.cpp
         src/entities/tile.h src/entities/tile.cpp
 
-        src/exceptions/texture_load_exception.h
+        src/exceptions/load_file_exception.h
 
         src/graphics/animation.h
         src/graphics/animation_controller.h src/graphics/animation_controller.cpp

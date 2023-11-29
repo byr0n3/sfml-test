@@ -5,6 +5,7 @@
 #include "entity.h"
 #include "../entities/player.h"
 #include "../entities/tile.h"
+#include "level.h"
 
 namespace byrone {
 	class Game {
@@ -31,10 +32,6 @@ namespace byrone {
 
 		void cleanup();
 
-		std::vector<Tile> tiles;
-
-		TextureSheet tilesSheet;
-
 	private:
 		unsigned int width;
 
@@ -43,6 +40,8 @@ namespace byrone {
 		bool open;
 
 		Player player;
+
+		Level level;
 	};
 }
 

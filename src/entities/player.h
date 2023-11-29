@@ -11,6 +11,7 @@
 #include "../core/entity.h"
 #include "../core/utilities.h"
 #include "../graphics/animation_controller.h"
+#include "../core/level.h"
 
 namespace byrone {
 	enum PlayerFlags : int16_t {
@@ -25,7 +26,7 @@ namespace byrone {
 
 		void handleInput(const float &deltaTime) override;
 
-		void update(const float &deltaTime, std::vector<Tile> *tiles);
+		void update(const float &deltaTime, Level *level);
 
 	private:
 		PlayerFlags flags;
