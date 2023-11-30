@@ -27,6 +27,8 @@ add_executable(sfml-test src/main.cpp
 target_link_libraries(sfml-test PRIVATE sfml-graphics)
 target_compile_features(sfml-test PRIVATE cxx_std_17)
 
+add_executable(level-editor src/level-editor/main.cpp)
+
 if (WIN32)
     add_custom_command(
             TARGET sfml-test
