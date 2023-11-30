@@ -14,10 +14,14 @@ namespace byrone {
 
 		void draw(sf::RenderWindow *window);
 
+		[[nodiscard]] sf::Vector2f getPlayerPosition() const;
+
 		std::vector<Tile> *getTiles();
 
 	private:
 		TextureSheet *textureSheet;
+
+		sf::Vector2f playerPosition;
 
 		std::vector<Tile> tiles;
 	};

@@ -25,12 +25,9 @@ bool byrone::Game::isOpen() const {
 }
 
 void byrone::Game::initialize() {
-	sf::Vector2i size = this->player.getSize();
-
 	this->level = byrone::Level("../assets/levels/test.lvl", this->fHeight());
 
-	// skip a tile on X and Y axis
-	this->player.setPosition(sf::Vector2f(size.x * 2.0f, this->fHeight() - (size.y * 3.0f)));
+	this->player.setPosition(this->level.getPlayerPosition());
 }
 
 void byrone::Game::handleEvents(sf::RenderWindow *window) {
