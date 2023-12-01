@@ -5,12 +5,15 @@
 #include <SFML/Window/Mouse.hpp>
 #include <cmath>
 
-sf::Vector2f getPlacePosition(const sf::RenderWindow &window, float tileSize) {
+int spriteIdx = 0;
+sf::Vector2f placePosition;
+
+void updatePlacePosition(const sf::RenderWindow &window, float tileSize) {
 	sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
 	float x = std::floor((float) mousePosition.x / tileSize);
 	float y = std::floor((float) mousePosition.y / tileSize);
 
-	return sf::Vector2f(x, y) * tileSize;
+	placePosition = sf::Vector2f(x, y) * tileSize;
 }
 
 byrone::LevelEditor::LevelEditor() = default;
@@ -18,20 +21,20 @@ byrone::LevelEditor::LevelEditor() = default;
 byrone::LevelEditor::LevelEditor(const char *tileSetPath, int tileSize) {
 	this->tileSet = byrone::TextureSheet(tileSetPath, {tileSize, tileSize});
 
-	if (!this->font.loadFromFile("../assets/fonts/mono.ttf")) {
-		throw byrone::load_file_exception("../assets/fonts/mono.ttf");
-	}
-
-	this->currentTile = byrone::Tile(&this->tileSet, 0, VECTOR2F_ZERO);
+	this->currentTile = byrone::Tile(&this->tileSet, spriteIdx, VECTOR2F_ZERO);
 }
 
-void byrone::LevelEditor::update(const sf::RenderWindow &window) {
-	this->placePosition = getPlacePosition(window, this->getTileSizeF().x);
-	this->currentTile.setPosition(this->placePosition);
+void byrone::LevelEditor::update(const sf::RenderWindow &window, const float &mouseScrollDelta) {
+	updatePlacePosition(window, this->getTileSizeF().x);
 
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->canPlaceTile()) {
-		this->currentTile.setColor(sf::Color::White);
-		this->tiles.push_back(this->currentTile);
+	this->currentTile.setPosition(placePosition);
+
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+		// @todo Replace tile if different sprite index
+		if (this->canPlaceTile()) {
+			this->currentTile.setColor(sf::Color::White);
+			this->tiles.push_back(this->currentTile);
+		}
 	}
 
 	this->currentTile.setColor(sf::Color(255, 255, 255, 150));
@@ -39,21 +42,16 @@ void byrone::LevelEditor::update(const sf::RenderWindow &window) {
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
 		this->removeTile();
 	}
+
+	if (mouseScrollDelta > 0) {
+		this->currentTile.setTextureRect(this->tileSet.get(++spriteIdx));
+	} else if (mouseScrollDelta < 0) {
+		this->currentTile.setTextureRect(this->tileSet.get(--spriteIdx));
+	}
 }
 
 void byrone::LevelEditor::draw(sf::RenderWindow *window) {
 	window->clear(sf::Color::Blue);
-
-	std::string label =
-			"Position: " + std::to_string((int) placePosition.x) + "," + std::to_string((int) placePosition.y);
-
-	sf::Text text(label, font, 24);
-
-	text.setPosition(10.0f, 10.0f);
-
-	text.setFillColor(sf::Color::White);
-
-	window->draw(text);
 
 	window->draw(currentTile);
 
@@ -72,7 +70,7 @@ sf::Vector2f byrone::LevelEditor::getTileSizeF() const {
 
 bool byrone::LevelEditor::canPlaceTile() {
 	return std::all_of(this->tiles.cbegin(), this->tiles.cend(), [this](const byrone::Tile &tile) {
-		return tile.getPosition() != this->placePosition;
+		return tile.getPosition() != placePosition;
 	});
 }
 
@@ -80,7 +78,7 @@ void byrone::LevelEditor::removeTile() {
 	int idx = -1;
 
 	for (int i = 0; i < this->tiles.size(); i++) {
-		if (this->tiles[i].getPosition() == this->placePosition) {
+		if (this->tiles[i].getPosition() == placePosition) {
 			idx = i;
 			break;
 		}

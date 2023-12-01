@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <iostream>
 #include "../graphics/texturesheet.h"
 #include "../entities/tile.h"
 #include "../core/utilities.h"
@@ -21,6 +22,8 @@ int main() {
 	bool open = true;
 
 	while (open) {
+		float mouseDelta = 0;
+		
 		for (sf::Event event = sf::Event(); window.pollEvent(event);) {
 			switch (event.type) {
 				case sf::Event::Closed:
@@ -35,6 +38,10 @@ int main() {
 					break;
 				}
 
+				case sf::Event::MouseWheelScrolled:
+					mouseDelta = event.mouseWheelScroll.delta;
+					break;
+
 				default:
 					break;
 			}
@@ -44,7 +51,7 @@ int main() {
 			continue;
 		}
 
-		editor.update(window);
+		editor.update(window, mouseDelta);
 
 		editor.draw(&window);
 

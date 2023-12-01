@@ -12,7 +12,7 @@ namespace byrone {
 
 		explicit LevelEditor(const char *tileSetPath, int tileSize);
 
-		void update(const sf::RenderWindow &window);
+		void update(const sf::RenderWindow &window, const float &mouseScrollDelta);
 
 		void draw(sf::RenderWindow *window);
 
@@ -22,9 +22,7 @@ namespace byrone {
 
 	private:
 		byrone::TextureSheet tileSet;
-		sf::Font font;
 
-		sf::Vector2f placePosition;
 		byrone::Tile currentTile;
 		std::vector<byrone::Tile> tiles;
 
