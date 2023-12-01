@@ -2,9 +2,6 @@
 #include <iostream>
 #include "core/game.h"
 
-#define SCREEN_WIDTH 960
-#define SCREEN_HEIGHT 540
-
 std::string getMetricsLabel(sf::Time deltaTime) {
 	float ms = deltaTime.asSeconds() * 1000;
 
@@ -25,7 +22,7 @@ std::string getMetricsLabel(sf::Time deltaTime) {
 }
 
 int main() {
-	sf::VideoMode screenSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+	sf::VideoMode screenSize(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
 
 	// @todo Use 3.3?
 	sf::ContextSettings settings(0, 0, 16, 2, 1);
@@ -34,7 +31,7 @@ int main() {
 
 	window.setFramerateLimit(144);
 
-	byrone::Game game(SCREEN_WIDTH, SCREEN_HEIGHT);
+	byrone::Game game(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
 
 	game.initialize();
 

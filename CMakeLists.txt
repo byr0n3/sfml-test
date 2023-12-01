@@ -27,13 +27,31 @@ add_executable(sfml-test src/main.cpp
 target_link_libraries(sfml-test PRIVATE sfml-graphics)
 target_compile_features(sfml-test PRIVATE cxx_std_17)
 
-add_executable(level-editor src/level-editor/main.cpp)
+add_executable(level-editor src/level-editor/main.cpp
+        src/level-editor/editor.h src/level-editor/editor.cpp
+
+        src/core/entity.h src/core/entity.cpp
+        src/core/utilities.h
+
+        src/entities/tile.h src/entities/tile.cpp
+
+        src/exceptions/load_file_exception.h
+
+        src/graphics/texturesheet.h src/graphics/texturesheet.cpp)
+target_link_libraries(level-editor PRIVATE sfml-graphics)
+target_compile_features(level-editor PRIVATE cxx_std_17)
 
 if (WIN32)
     add_custom_command(
             TARGET sfml-test
             COMMENT "Copy OpenAL DLL"
             PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${SFML_SOURCE_DIR}/extlibs/bin/$<IF:$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>,x64,x86>/openal32.dll $<TARGET_FILE_DIR:sfml-test>
+            VERBATIM)
+
+    add_custom_command(
+            TARGET level-editor
+            COMMENT "Copy OpenAL DLL"
+            PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${SFML_SOURCE_DIR}/extlibs/bin/$<IF:$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>,x64,x86>/openal32.dll $<TARGET_FILE_DIR:level-editor>
             VERBATIM)
 endif ()
 
