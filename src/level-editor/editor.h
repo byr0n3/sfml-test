@@ -29,6 +29,8 @@ namespace byrone {
 		std::vector<byrone::Tile> tiles;
 
 		bool canPlaceTile();
+
+		void removeTile();
 	};
 }
 

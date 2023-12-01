@@ -3,6 +3,7 @@
 #include "../core/utilities.h"
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Window/Mouse.hpp>
+#include <cmath>
 
 sf::Vector2f getPlacePosition(const sf::RenderWindow &window, float tileSize) {
 	sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
@@ -29,7 +30,14 @@ void byrone::LevelEditor::update(const sf::RenderWindow &window) {
 	this->currentTile.setPosition(this->placePosition);
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->canPlaceTile()) {
+		this->currentTile.setColor(sf::Color::White);
 		this->tiles.push_back(this->currentTile);
+	}
+
+	this->currentTile.setColor(sf::Color(255, 255, 255, 150));
+
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
+		this->removeTile();
 	}
 }
 
@@ -66,4 +74,22 @@ bool byrone::LevelEditor::canPlaceTile() {
 	return std::all_of(this->tiles.cbegin(), this->tiles.cend(), [this](const byrone::Tile &tile) {
 		return tile.getPosition() != this->placePosition;
 	});
+}
+
+void byrone::LevelEditor::removeTile() {
+	int idx = -1;
+
+	for (int i = 0; i < this->tiles.size(); i++) {
+		if (this->tiles[i].getPosition() == this->placePosition) {
+			idx = i;
+			break;
+		}
+	}
+
+	if (idx == -1) {
+		return;
+	}
+
+	// @todo Deconstruct?
+	this->tiles.erase(this->tiles.begin() + idx);
 }
