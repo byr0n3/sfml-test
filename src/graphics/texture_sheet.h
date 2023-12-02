@@ -20,6 +20,8 @@ namespace byrone {
 
 		[[nodiscard]] sf::Vector2i getSize() const;
 
+		[[nodiscard]] int getMaxIndex() const;
+
 	private:
 		sf::Texture texture;
 		sf::Vector2i size;

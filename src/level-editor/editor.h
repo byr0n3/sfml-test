@@ -4,6 +4,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include "../entities/tile.h"
+#include "storable_tile.h"
 
 namespace byrone {
 	class LevelEditor {
@@ -12,7 +13,9 @@ namespace byrone {
 
 		explicit LevelEditor(const char *tileSetPath, int tileSize);
 
-		void update(const sf::RenderWindow &window, const float &mouseScrollDelta);
+		void handleInput(const float &mouseScrollDelta);
+
+		void update(sf::RenderWindow *window, const float &deltaTime);
 
 		void draw(sf::RenderWindow *window);
 
@@ -24,9 +27,9 @@ namespace byrone {
 		byrone::TextureSheet tileSet;
 
 		byrone::Tile currentTile;
-		std::vector<byrone::Tile> tiles;
+		std::vector<byrone::StorableTile> tiles;
 
-		bool canPlaceTile();
+		int getTileIdx();
 
 		void removeTile();
 	};

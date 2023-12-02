@@ -23,12 +23,13 @@ add_executable(sfml-test src/main.cpp
 
         src/graphics/animation.h
         src/graphics/animation_controller.h src/graphics/animation_controller.cpp
-        src/graphics/texturesheet.h src/graphics/texturesheet.cpp)
+        src/graphics/texture_sheet.h src/graphics/texture_sheet.cpp)
 target_link_libraries(sfml-test PRIVATE sfml-graphics)
 target_compile_features(sfml-test PRIVATE cxx_std_17)
 
 add_executable(level-editor src/level-editor/main.cpp
         src/level-editor/editor.h src/level-editor/editor.cpp
+        src/level-editor/storable_tile.h src/level-editor/storable_tile.cpp
 
         src/core/entity.h src/core/entity.cpp
         src/core/utilities.h
@@ -37,7 +38,7 @@ add_executable(level-editor src/level-editor/main.cpp
 
         src/exceptions/load_file_exception.h
 
-        src/graphics/texturesheet.h src/graphics/texturesheet.cpp)
+        src/graphics/texture_sheet.h src/graphics/texture_sheet.cpp)
 target_link_libraries(level-editor PRIVATE sfml-graphics)
 target_compile_features(level-editor PRIVATE cxx_std_17)
 

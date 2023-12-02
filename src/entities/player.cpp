@@ -9,7 +9,7 @@
 
 byrone::Player::Player(sf::Vector2f position) : flags(byrone::PlayerFlags::None) {
 	this->textureSheet = new byrone::TextureSheet(TEXTURE_PATH, TEXTURE_TILE_SIZE);
-	this->updateSprite(0);
+	this->updateTexture(0);
 	this->setPosition(position);
 
 	// 16 * 2 = 32
@@ -33,7 +33,7 @@ void byrone::Player::handleInput(const float &deltaTime) {
 
 	// @todo Only on key down, not hold
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) &&
-		byrone::Flags::has<byrone::PlayerFlags, byrone::PlayerFlags::Grounded>(this->flags)) {
+	    byrone::Flags::has<byrone::PlayerFlags, byrone::PlayerFlags::Grounded>(this->flags)) {
 		this->velocity.y -= PLAYER_JUMP_VELOCITY;
 	}
 }
@@ -48,7 +48,7 @@ void byrone::Player::update(const float &deltaTime, byrone::Level *level) {
 	this->updateAnimation();
 
 	this->animations.update(deltaTime);
-	this->updateSprite(this->animations.getCurrentFrame());
+	this->updateTexture(this->animations.getCurrentFrame());
 
 	if (!byrone::Flags::has<byrone::PlayerFlags, byrone::PlayerFlags::Grounded>(this->flags)) {
 		// @todo (PLAYER_GRAVITY_ACCEL * deltaTime) because gravity
@@ -80,12 +80,12 @@ void byrone::Player::update(const float &deltaTime, byrone::Level *level) {
 
 		// don't check tiles that are out of range
 		if ((diffX < -size.x || diffX > size.x) ||
-			(diffY < -size.y || diffY > size.y)) {
+		    (diffY < -size.y || diffY > size.y)) {
 			continue;
 		}
 
 		if ((diffX >= -size.x && diffX <= size.x) &&
-			(diffY >= -size.y && diffY <= size.y)) {
+		    (diffY >= -size.y && diffY <= size.y)) {
 			byrone::Flags::add<byrone::PlayerFlags, byrone::PlayerFlags::Grounded>(this->flags);
 
 			this->velocity.y = 0.0f;

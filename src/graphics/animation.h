@@ -1,7 +1,7 @@
 #ifndef BYRONE_ANIMATION
 #define BYRONE_ANIMATION
 
-#include "texturesheet.h"
+#include "texture_sheet.h"
 
 namespace byrone {
 	struct Animation {

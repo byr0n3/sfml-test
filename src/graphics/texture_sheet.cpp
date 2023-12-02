@@ -1,4 +1,4 @@
-#include "texturesheet.h"
+#include "texture_sheet.h"
 #include "../exceptions/load_file_exception.h"
 
 byrone::TextureSheet::TextureSheet() = default;
@@ -43,4 +43,15 @@ sf::IntRect byrone::TextureSheet::get(int x, int y, int width, int height) const
 
 sf::Vector2i byrone::TextureSheet::getSize() const {
 	return this->size;
+}
+
+int byrone::TextureSheet::getMaxIndex() const {
+	sf::Vector2 textureSize = this->texture.getSize();
+	int width = this->size.x;
+	int height = this->size.y;
+
+	int availableX = (int) textureSize.x / width;
+	int availableY = (int) textureSize.y / height;
+
+	return (availableX / availableY) - 1;
 }
