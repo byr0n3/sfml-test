@@ -68,7 +68,8 @@ void byrone::Player::update(const float &deltaTime, byrone::Level *level) {
 	sf::Vector2f targetPosition = this->getPosition() + (this->velocity * deltaTime);
 	this->velocity.x = 0.0f;
 
-	sf::FloatRect playerRect(targetPosition.x, targetPosition.y, size.x, size.y);
+	// @todo Make smaller so we can fall in between one tile gaps
+	sf::FloatRect playerBounds(targetPosition.x, targetPosition.y, size.x, size.y);
 
 	byrone::Flags::remove<byrone::PlayerFlags, byrone::PlayerFlags::Grounded>(this->flags);
 
@@ -91,8 +92,10 @@ void byrone::Player::update(const float &deltaTime, byrone::Level *level) {
 			this->velocity.y = 0.0f;
 		}
 
+		sf::FloatRect tileBounds = tile.getGlobalBounds();
+
 		// if the target position is in a tile, don't move
-		if (tile.getGlobalBounds().intersects(playerRect)) {
+		if (tileBounds.intersects(playerBounds)) {
 			return;
 		}
 	}

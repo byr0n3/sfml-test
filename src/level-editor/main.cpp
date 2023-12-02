@@ -13,6 +13,7 @@ int main() {
 	sf::RenderWindow window = sf::RenderWindow(screenSize, "SFML Test - Level Editor", sf::Style::Default, settings);
 
 	window.setFramerateLimit(60);
+	window.setKeyRepeatEnabled(false);
 
 	// @todo Configurable
 	byrone::LevelEditor editor("../assets/tilesets/tileset.png", 32);
@@ -23,36 +24,11 @@ int main() {
 	while (open) {
 		sf::Time deltaTime = clock.restart();
 
-		float mouseDelta = 0;
-
-		for (sf::Event event = sf::Event(); window.pollEvent(event);) {
-			switch (event.type) {
-				case sf::Event::Closed:
-					open = false;
-					break;
-
-				case sf::Event::KeyPressed: {
-					if (event.key.scancode == sf::Keyboard::Scancode::Escape) {
-						open = false;
-					}
-
-					break;
-				}
-
-				case sf::Event::MouseWheelScrolled:
-					mouseDelta = event.mouseWheelScroll.delta;
-					break;
-
-				default:
-					break;
-			}
-		}
+		open = editor.handleInput(&window);
 
 		if (!window.hasFocus()) {
 			continue;
 		}
-
-		editor.handleInput(mouseDelta);
 
 		editor.update(&window, deltaTime.asSeconds());
 

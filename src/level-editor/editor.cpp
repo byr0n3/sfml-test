@@ -3,6 +3,7 @@
 #include "../core/utilities.h"
 #include <SFML/Window/Mouse.hpp>
 #include <SFML/Window/Keyboard.hpp>
+#include <SFML/Window/Event.hpp>
 #include <cmath>
 
 #define CAMERA_MOVE_SPEED 100.0f
@@ -22,6 +23,20 @@ void updatePlacePosition(sf::RenderWindow *window, float tileSize) {
 	placePosition = sf::Vector2f(x, y) * tileSize;
 }
 
+void updateTextureIdx(int mod) {
+	int target = textureIdx + mod;
+
+	if (target < 0) {
+		target = maxTextureIdx;
+	}
+
+	if (target > maxTextureIdx) {
+		target = 0;
+	}
+
+	textureIdx = target;
+}
+
 byrone::LevelEditor::LevelEditor() = default;
 
 byrone::LevelEditor::LevelEditor(const char *tileSetPath, int tileSize) {
@@ -32,7 +47,43 @@ byrone::LevelEditor::LevelEditor(const char *tileSetPath, int tileSize) {
 	this->currentTile.setColor(sf::Color(255, 255, 255, 150));
 }
 
-void byrone::LevelEditor::handleInput(const float &mouseScrollDelta) {
+bool byrone::LevelEditor::handleInput(sf::RenderWindow *window) {
+	for (sf::Event event = sf::Event(); window->pollEvent(event);) {
+		switch (event.type) {
+			case sf::Event::Closed:
+				return false;
+
+			case sf::Event::KeyPressed: {
+				if (event.key.scancode == sf::Keyboard::Scancode::Escape) {
+					return false;
+				}
+
+				if (event.key.scancode == sf::Keyboard::Scancode::Right) {
+					updateTextureIdx(1);
+				}
+
+				if (event.key.scancode == sf::Keyboard::Scancode::Left) {
+					updateTextureIdx(-1);
+				}
+
+				break;
+			}
+
+			case sf::Event::MouseWheelScrolled:
+				if (event.mouseWheelScroll.delta != 0) {
+					updateTextureIdx((int) event.mouseWheelScroll.delta);
+				}
+				break;
+
+			default:
+				break;
+		}
+	}
+
+	if (!window->hasFocus()) {
+		return false;
+	}
+
 	// Update camera position
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
 		cameraMovement.y -= 1;
@@ -50,20 +101,17 @@ void byrone::LevelEditor::handleInput(const float &mouseScrollDelta) {
 		cameraMovement.x += 1;
 	}
 
-	// Update current texture id
-	if (mouseScrollDelta > 0) {
-		textureIdx = textureIdx == maxTextureIdx ? 0 : textureIdx + 1;
-	} else if (mouseScrollDelta < 0) {
-		textureIdx = textureIdx == 0 ? maxTextureIdx : textureIdx - 1;
-	}
+	return true;
 }
 
 void byrone::LevelEditor::update(sf::RenderWindow *window, const float &deltaTime) {
 	// Move the camera
-	// @todo Snap to grid? Some artifacts on sprites when moving
-	sf::View view = window->getView();
-	view.move(((sf::Vector2f) cameraMovement) * (CAMERA_MOVE_SPEED * deltaTime));
-	window->setView(view);
+	if (cameraMovement != VECTOR2I_ZERO) {
+		// @todo Snap to grid? Some artifacts on sprites when moving
+		sf::View view = window->getView();
+		view.move(((sf::Vector2f) cameraMovement) * (CAMERA_MOVE_SPEED * deltaTime));
+		window->setView(view);
+	}
 
 	cameraMovement = VECTOR2I_ZERO;
 
