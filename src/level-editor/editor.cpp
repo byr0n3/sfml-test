@@ -60,6 +60,7 @@ void byrone::LevelEditor::handleInput(const float &mouseScrollDelta) {
 
 void byrone::LevelEditor::update(sf::RenderWindow *window, const float &deltaTime) {
 	// Move the camera
+	// @todo Snap to grid? Some artifacts on sprites when moving
 	sf::View view = window->getView();
 	view.move(((sf::Vector2f) cameraMovement) * (CAMERA_MOVE_SPEED * deltaTime));
 	window->setView(view);
