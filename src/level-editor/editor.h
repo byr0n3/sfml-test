@@ -13,7 +13,7 @@ namespace byrone {
 
 		explicit LevelEditor(const char *tileSetPath, int tileSize);
 
-		bool handleInput(sf::RenderWindow *window);
+		void handleInput();
 
 		void update(sf::RenderWindow *window, const float &deltaTime);
 

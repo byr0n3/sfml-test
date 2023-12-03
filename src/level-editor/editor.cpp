@@ -1,9 +1,9 @@
 #include "editor.h"
 #include "../exceptions/load_file_exception.h"
 #include "../core/utilities.h"
+#include "../core/input_manager.h"
 #include <SFML/Window/Mouse.hpp>
 #include <SFML/Window/Keyboard.hpp>
-#include <SFML/Window/Event.hpp>
 #include <cmath>
 
 #define CAMERA_MOVE_SPEED 100.0f
@@ -47,63 +47,37 @@ byrone::LevelEditor::LevelEditor(const char *tileSetPath, int tileSize) {
 	this->currentTile.setColor(sf::Color(255, 255, 255, 150));
 }
 
-bool byrone::LevelEditor::handleInput(sf::RenderWindow *window) {
-	for (sf::Event event = sf::Event(); window->pollEvent(event);) {
-		switch (event.type) {
-			case sf::Event::Closed:
-				return false;
-
-			case sf::Event::KeyPressed: {
-				if (event.key.scancode == sf::Keyboard::Scancode::Escape) {
-					return false;
-				}
-
-				if (event.key.scancode == sf::Keyboard::Scancode::Right) {
-					updateTextureIdx(1);
-				}
-
-				if (event.key.scancode == sf::Keyboard::Scancode::Left) {
-					updateTextureIdx(-1);
-				}
-
-				break;
-			}
-
-			case sf::Event::MouseWheelScrolled: {
-				if (event.mouseWheelScroll.delta != 0) {
-					updateTextureIdx((int) event.mouseWheelScroll.delta);
-				}
-
-				break;
-			}
-
-			default:
-				break;
-		}
+void byrone::LevelEditor::handleInput() {
+	if (byrone::InputManager::Instance()->isKeyPressed(sf::Keyboard::Right)) {
+		updateTextureIdx(1);
 	}
 
-	if (!window->hasFocus()) {
-		return true;
+	if (byrone::InputManager::Instance()->isKeyPressed(sf::Keyboard::Left)) {
+		updateTextureIdx(-1);
+	}
+
+	float mouseDelta = byrone::InputManager::Instance()->getMouseDelta();
+
+	if (mouseDelta != 0) {
+		updateTextureIdx((int) mouseDelta);
 	}
 
 	// Update camera position
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+	if (byrone::InputManager::Instance()->isKeyDown(sf::Keyboard::W)) {
 		cameraMovement.y -= 1;
 	}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+	if (byrone::InputManager::Instance()->isKeyDown(sf::Keyboard::A)) {
 		cameraMovement.x -= 1;
 	}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+	if (byrone::InputManager::Instance()->isKeyDown(sf::Keyboard::S)) {
 		cameraMovement.y += 1;
 	}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+	if (byrone::InputManager::Instance()->isKeyDown(sf::Keyboard::D)) {
 		cameraMovement.x += 1;
 	}
-
-	return true;
 }
 
 void byrone::LevelEditor::update(sf::RenderWindow *window, const float &deltaTime) {

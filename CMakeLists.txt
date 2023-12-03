@@ -13,6 +13,7 @@ add_executable(sfml-test src/main.cpp
         src/core/entity.h src/core/entity.cpp
         src/core/flags.h
         src/core/game.h src/core/game.cpp
+        src/core/input_manager.h src/core/input_manager.cpp
         src/core/level.h src/core/level.cpp
         src/core/utilities.h
 
@@ -32,6 +33,7 @@ add_executable(level-editor src/level-editor/main.cpp
         src/level-editor/storable_tile.h src/level-editor/storable_tile.cpp
 
         src/core/entity.h src/core/entity.cpp
+        src/core/input_manager.h src/core/input_manager.cpp
         src/core/utilities.h
 
         src/entities/tile.h src/entities/tile.cpp

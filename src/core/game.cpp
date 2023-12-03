@@ -1,5 +1,6 @@
 #include "game.h"
 #include "../exceptions/load_file_exception.h"
+#include "input_manager.h"
 #include <SFML/Window/Event.hpp>
 
 bool limitFrames = true;
@@ -59,6 +60,8 @@ void byrone::Game::handleEvents(sf::RenderWindow *window) {
 			default:
 				break;
 		}
+
+		byrone::InputManager::Instance()->handleEvent(&event);
 	}
 }
 
@@ -68,6 +71,8 @@ void byrone::Game::handleInput(const float &deltaTime) {
 
 void byrone::Game::update(const float &deltaTime) {
 	this->player.update(deltaTime, &this->level);
+
+	byrone::InputManager::Instance()->update();
 }
 
 void byrone::Game::render(sf::RenderWindow *window) {

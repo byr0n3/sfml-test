@@ -1,6 +1,7 @@
 #include "player.h"
 #include "../exceptions/load_file_exception.h"
 #include "../core/flags.h"
+#include "../core/input_manager.h"
 #include <SFML/Window/Keyboard.hpp>
 
 #define TEXTURE_TILE_SIZE sf::Vector2i(16, 16)
@@ -23,16 +24,15 @@ byrone::Player::Player(sf::Vector2f position) : flags(byrone::PlayerFlags::None)
 }
 
 void byrone::Player::handleInput(const float &deltaTime) {
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+	if (byrone::InputManager::Instance()->isKeyDown(sf::Keyboard::A)) {
 		this->velocity.x -= PLAYER_MOVE_SPEED;
 	}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+	if (byrone::InputManager::Instance()->isKeyDown(sf::Keyboard::D)) {
 		this->velocity.x += PLAYER_MOVE_SPEED;
 	}
 
-	// @todo Only on key down, not hold
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) &&
+	if (byrone::InputManager::Instance()->isKeyPressed(sf::Keyboard::Space) &&
 	    byrone::Flags::has<byrone::PlayerFlags, byrone::PlayerFlags::Grounded>(this->flags)) {
 		this->velocity.y -= PLAYER_JUMP_VELOCITY;
 	}

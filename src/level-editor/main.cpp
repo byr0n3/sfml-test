@@ -1,7 +1,7 @@
-#include <SFML/Graphics.hpp>
 #include "../graphics/texture_sheet.h"
 #include "../entities/tile.h"
 #include "../core/utilities.h"
+#include "../core/input_manager.h"
 #include "editor.h"
 
 int main() {
@@ -24,17 +24,40 @@ int main() {
 	while (open) {
 		sf::Time deltaTime = clock.restart();
 
-		open = editor.handleInput(&window);
+		for (sf::Event event = sf::Event(); window.pollEvent(event);) {
+			switch (event.type) {
+				case sf::Event::Closed:
+					open = false;
+					break;
+
+				case sf::Event::KeyPressed: {
+					if (event.key.scancode == sf::Keyboard::Scancode::Escape) {
+						open = false;
+					}
+
+					break;
+				}
+
+				default:
+					break;
+			}
+
+			byrone::InputManager::Instance()->handleEvent(&event);
+		}
 
 		if (!window.hasFocus()) {
 			continue;
 		}
+
+		editor.handleInput();
 
 		editor.update(&window, deltaTime.asSeconds());
 
 		editor.draw(&window);
 
 		window.display();
+
+		byrone::InputManager::Instance()->update();
 	}
 
 	window.close();
