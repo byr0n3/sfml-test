@@ -69,11 +69,13 @@ bool byrone::LevelEditor::handleInput(sf::RenderWindow *window) {
 				break;
 			}
 
-			case sf::Event::MouseWheelScrolled:
+			case sf::Event::MouseWheelScrolled: {
 				if (event.mouseWheelScroll.delta != 0) {
 					updateTextureIdx((int) event.mouseWheelScroll.delta);
 				}
+
 				break;
+			}
 
 			default:
 				break;
@@ -81,7 +83,7 @@ bool byrone::LevelEditor::handleInput(sf::RenderWindow *window) {
 	}
 
 	if (!window->hasFocus()) {
-		return false;
+		return true;
 	}
 
 	// Update camera position
@@ -111,24 +113,25 @@ void byrone::LevelEditor::update(sf::RenderWindow *window, const float &deltaTim
 		sf::View view = window->getView();
 		view.move(((sf::Vector2f) cameraMovement) * (CAMERA_MOVE_SPEED * deltaTime));
 		window->setView(view);
-	}
 
-	cameraMovement = VECTOR2I_ZERO;
+		cameraMovement = VECTOR2I_ZERO;
+	}
 
 	// Update the preview tile
 	updatePlacePosition(window, this->getTileSizeF().x);
 	this->currentTile.setPosition(placePosition);
-	this->currentTile.setTextureRect(this->tileSet.get(textureIdx));
+	this->currentTile.updateTexture(textureIdx);
 
 	// Place tile logic
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-		int idx = this->getTileIdx();
+		int idx = this->getTileIdx(placePosition);
 
 		// no tile stored at the place position
 		if (idx == -1) {
 			this->tiles.emplace_back(textureIdx, placePosition);
 			// replace stored tile if we have a different texture id
 		} else if (this->tiles[idx].getTextureIdx() != textureIdx) {
+			// @todo Free old tile?
 			this->tiles[idx] = byrone::StorableTile(textureIdx, placePosition);
 		}
 	}
@@ -166,9 +169,9 @@ sf::Vector2f byrone::LevelEditor::getTileSizeF() const {
 	return (sf::Vector2f) this->tileSet.getSize();
 }
 
-int byrone::LevelEditor::getTileIdx() {
+int byrone::LevelEditor::getTileIdx(const sf::Vector2f &position) {
 	for (int i = 0; i < this->tiles.size(); i++) {
-		if (this->tiles[i].getPosition() == placePosition) {
+		if (this->tiles[i].getPosition() == position) {
 			return i;
 		}
 	}
@@ -177,19 +180,13 @@ int byrone::LevelEditor::getTileIdx() {
 }
 
 void byrone::LevelEditor::removeTile() {
-	int idx = -1;
-
-	for (int i = 0; i < this->tiles.size(); i++) {
-		if (this->tiles[i].getPosition() == placePosition) {
-			idx = i;
-			break;
-		}
-	}
+	int idx = this->getTileIdx(placePosition);
 
 	if (idx == -1) {
 		return;
 	}
 
+	// @todo Free tile?
 	this->tiles.erase(this->tiles.begin() + idx);
 
 	// @todo shrink to fit?

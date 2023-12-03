@@ -29,7 +29,7 @@ namespace byrone {
 		byrone::Tile currentTile;
 		std::vector<byrone::StorableTile> tiles;
 
-		int getTileIdx();
+		int getTileIdx(const sf::Vector2f &position);
 
 		void removeTile();
 	};
