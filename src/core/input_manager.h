@@ -24,6 +24,14 @@ namespace byrone {
 
 		bool isKeyReleased(const sf::Keyboard::Key &code);
 
+		bool isMouseDown(const sf::Mouse::Button &button);
+
+		bool isMouseUp(const sf::Mouse::Button &button);
+
+		bool isMousePressed(const sf::Mouse::Button &button);
+
+		bool isMouseReleased(const sf::Mouse::Button &button);
+
 		[[nodiscard]] float getMouseDelta() const;
 
 		void update();
@@ -35,7 +43,7 @@ namespace byrone {
 
 		InputManager();
 
-		std::unordered_map<sf::Keyboard::Key, byrone::InputKey> inputs;
+		std::unordered_map<int, byrone::InputKey> inputs;
 		float mouseDelta;
 	};
 }

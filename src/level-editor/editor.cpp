@@ -97,7 +97,7 @@ void byrone::LevelEditor::update(sf::RenderWindow *window, const float &deltaTim
 	this->currentTile.updateTexture(textureIdx);
 
 	// Place tile logic
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+	if (byrone::InputManager::Instance()->isMouseDown(sf::Mouse::Left)) {
 		int idx = this->getTileIdx(placePosition);
 
 		// no tile stored at the place position
@@ -111,7 +111,7 @@ void byrone::LevelEditor::update(sf::RenderWindow *window, const float &deltaTim
 	}
 
 	// Remove tile logic
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
+	if (byrone::InputManager::Instance()->isMouseDown(sf::Mouse::Right)) {
 		this->removeTile();
 	}
 }
@@ -123,6 +123,10 @@ void byrone::LevelEditor::draw(sf::RenderWindow *window) {
 
 	// Temporarily update the current tile to prevent making a lot of sprite instances
 	for (const byrone::StorableTile &tile: tiles) {
+		if (tile.getPosition() == placePosition && tile.getTextureIdx() != textureIdx) {
+			continue;
+		}
+
 		this->currentTile.updateTexture(tile.getTextureIdx());
 		this->currentTile.setPosition(tile.getPosition());
 		this->currentTile.setColor(sf::Color::White);
