@@ -30,6 +30,7 @@ target_compile_features(sfml-test PRIVATE cxx_std_17)
 
 add_executable(level-editor src/level-editor/main.cpp
         src/level-editor/editor.h src/level-editor/editor.cpp
+        src/level-editor/storable_level.h src/level-editor/storable_level.cpp
         src/level-editor/storable_tile.h src/level-editor/storable_tile.cpp
 
         src/core/entity.h src/core/entity.cpp

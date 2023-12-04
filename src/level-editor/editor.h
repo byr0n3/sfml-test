@@ -5,6 +5,7 @@
 #include <SFML/Graphics/Font.hpp>
 #include "../entities/tile.h"
 #include "storable_tile.h"
+#include "storable_level.h"
 
 namespace byrone {
 	class LevelEditor {
@@ -25,13 +26,11 @@ namespace byrone {
 
 	private:
 		byrone::TextureSheet tileSet;
+		byrone::StorableLevel level;
 
+		// @todo Don't store and make a new instance each update?
+		// Would maybe be allocated on stack, might be faster/less resource heavy
 		byrone::Tile currentTile;
-		std::vector<byrone::StorableTile> tiles;
-
-		int getTileIdx(const sf::Vector2f &position);
-
-		void removeTile();
 	};
 }
 

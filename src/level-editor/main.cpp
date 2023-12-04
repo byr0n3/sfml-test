@@ -45,13 +45,11 @@ int main() {
 			byrone::InputManager::Instance()->handleEvent(&event);
 		}
 
-		if (!window.hasFocus()) {
-			continue;
+		if (window.hasFocus()) {
+			editor.handleInput();
+
+			editor.update(&window, deltaTime.asSeconds());
 		}
-
-		editor.handleInput();
-
-		editor.update(&window, deltaTime.asSeconds());
 
 		editor.draw(&window);
 

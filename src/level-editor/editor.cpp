@@ -40,6 +40,8 @@ void updateTextureIdx(int mod) {
 byrone::LevelEditor::LevelEditor() = default;
 
 byrone::LevelEditor::LevelEditor(const char *tileSetPath, int tileSize) {
+	auto a = byrone::StorableLevel::readFromFile("../assets/levels/write-test.lvl");
+
 	this->tileSet = byrone::TextureSheet(tileSetPath, {tileSize, tileSize});
 	maxTextureIdx = this->tileSet.getMaxIndex();
 
@@ -78,6 +80,10 @@ void byrone::LevelEditor::handleInput() {
 	if (byrone::InputManager::Instance()->isKeyDown(sf::Keyboard::D)) {
 		cameraMovement.x += 1;
 	}
+
+	if (byrone::InputManager::Instance()->isKeyPressed(sf::Keyboard::Enter)) {
+		this->level.write("../assets/levels/write-test.lvl");
+	}
 }
 
 void byrone::LevelEditor::update(sf::RenderWindow *window, const float &deltaTime) {
@@ -98,21 +104,12 @@ void byrone::LevelEditor::update(sf::RenderWindow *window, const float &deltaTim
 
 	// Place tile logic
 	if (byrone::InputManager::Instance()->isMouseDown(sf::Mouse::Left)) {
-		int idx = this->getTileIdx(placePosition);
-
-		// no tile stored at the place position
-		if (idx == -1) {
-			this->tiles.emplace_back(textureIdx, placePosition);
-			// replace stored tile if we have a different texture id
-		} else if (this->tiles[idx].getTextureIdx() != textureIdx) {
-			// @todo Free old tile?
-			this->tiles[idx] = byrone::StorableTile(textureIdx, placePosition);
-		}
+		this->level.addOrReplaceTile(textureIdx, placePosition);
 	}
 
 	// Remove tile logic
 	if (byrone::InputManager::Instance()->isMouseDown(sf::Mouse::Right)) {
-		this->removeTile();
+		this->level.removeTile(placePosition);
 	}
 }
 
@@ -122,7 +119,7 @@ void byrone::LevelEditor::draw(sf::RenderWindow *window) {
 	window->draw(this->currentTile);
 
 	// Temporarily update the current tile to prevent making a lot of sprite instances
-	for (const byrone::StorableTile &tile: tiles) {
+	for (const byrone::StorableTile &tile: *this->level.getTiles()) {
 		if (tile.getPosition() == placePosition && tile.getTextureIdx() != textureIdx) {
 			continue;
 		}
@@ -145,27 +142,4 @@ sf::Vector2i byrone::LevelEditor::getTileSize() const {
 
 sf::Vector2f byrone::LevelEditor::getTileSizeF() const {
 	return (sf::Vector2f) this->tileSet.getSize();
-}
-
-int byrone::LevelEditor::getTileIdx(const sf::Vector2f &position) {
-	for (int i = 0; i < this->tiles.size(); i++) {
-		if (this->tiles[i].getPosition() == position) {
-			return i;
-		}
-	}
-
-	return -1;
-}
-
-void byrone::LevelEditor::removeTile() {
-	int idx = this->getTileIdx(placePosition);
-
-	if (idx == -1) {
-		return;
-	}
-
-	// @todo Free tile?
-	this->tiles.erase(this->tiles.begin() + idx);
-
-	// @todo shrink to fit?
 }
