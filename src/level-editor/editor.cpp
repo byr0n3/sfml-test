@@ -7,6 +7,7 @@
 #include <cmath>
 
 #define CAMERA_MOVE_SPEED 100.0f
+#define CUSTOM_LEVEL_PATH "../assets/levels/custom.lvl"
 
 // @todo Private fields on editor instance?
 int textureIdx = 0;
@@ -40,7 +41,7 @@ void updateTextureIdx(int mod) {
 byrone::LevelEditor::LevelEditor() = default;
 
 byrone::LevelEditor::LevelEditor(const char *tileSetPath, int tileSize) {
-	auto a = byrone::StorableLevel::readFromFile("../assets/levels/write-test.lvl");
+	this->level = byrone::StorableLevel::loadFromFileOrDefault(CUSTOM_LEVEL_PATH, tileSetPath, tileSize);
 
 	this->tileSet = byrone::TextureSheet(tileSetPath, {tileSize, tileSize});
 	maxTextureIdx = this->tileSet.getMaxIndex();
@@ -50,6 +51,7 @@ byrone::LevelEditor::LevelEditor(const char *tileSetPath, int tileSize) {
 }
 
 void byrone::LevelEditor::handleInput() {
+	// Switching texture
 	if (byrone::InputManager::Instance()->isKeyPressed(sf::Keyboard::Right)) {
 		updateTextureIdx(1);
 	}
@@ -81,8 +83,9 @@ void byrone::LevelEditor::handleInput() {
 		cameraMovement.x += 1;
 	}
 
+	// Saving level to file
 	if (byrone::InputManager::Instance()->isKeyPressed(sf::Keyboard::Enter)) {
-		this->level.write("../assets/levels/write-test.lvl");
+		this->level.write(CUSTOM_LEVEL_PATH);
 	}
 }
 

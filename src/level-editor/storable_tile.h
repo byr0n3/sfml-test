@@ -10,6 +10,8 @@ namespace byrone {
 
 		StorableTile(const int &textureIdx, const sf::Vector2f &position);
 
+		void setTextureIdx(const int &newTextureIdx);
+
 		[[nodiscard]] int getTextureIdx() const;
 
 		[[nodiscard]] sf::Vector2f getPosition() const;

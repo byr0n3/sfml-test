@@ -27,11 +27,13 @@ namespace byrone {
 
 		bool write(const char *path);
 
-		static StorableLevel readFromFile(const char *path);
+		static StorableLevel loadFromFileOrDefault(const char *path,
+												   const char *defaultTileSetPath,
+												   const int &defaultTileSize);
 
 	private:
 		const char *tileSetPath;
-		const int tileSize;
+		int tileSize;
 		std::vector<byrone::StorableTile> tiles;
 	};
 }

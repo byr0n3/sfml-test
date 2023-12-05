@@ -3,7 +3,11 @@
 byrone::StorableTile::StorableTile() = default;
 
 byrone::StorableTile::StorableTile(const int &textureIdx, const sf::Vector2f &position) : textureIdx(textureIdx),
-                                                                                          position(position) {
+																						  position(position) {
+}
+
+void byrone::StorableTile::setTextureIdx(const int &newTextureIdx) {
+	this->textureIdx = newTextureIdx;
 }
 
 int byrone::StorableTile::getTextureIdx() const {

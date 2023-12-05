@@ -3,8 +3,7 @@
 #include <fstream>
 #include <iostream>
 
-byrone::StorableLevel::StorableLevel() : tileSize(0) {
-}
+byrone::StorableLevel::StorableLevel() = default;
 
 byrone::StorableLevel::StorableLevel(const char *tileSetPath, const int &tileSize) : tileSetPath(tileSetPath),
 																					 tileSize(tileSize),
@@ -16,9 +15,7 @@ void byrone::StorableLevel::addOrReplaceTile(const int &textureId, const sf::Vec
 	int idx = this->getTileAtPosition(position);
 
 	if (idx != -1) {
-		if (this->tiles[idx].getTextureIdx() != textureId) {
-			this->tiles[idx] = byrone::StorableTile(textureId, position);
-		}
+		this->tiles[idx].setTextureIdx(textureId);
 	} else {
 		this->tiles.emplace_back(textureId, position);
 	}
@@ -30,7 +27,8 @@ bool byrone::StorableLevel::removeTile(const int &index) {
 	}
 
 	this->tiles.erase(this->tiles.begin() + index);
-	// @todo Deconstruct old value & shrink to fit?
+	this->tiles.shrink_to_fit();
+
 	return true;
 }
 
@@ -42,7 +40,8 @@ bool byrone::StorableLevel::removeTile(const sf::Vector2f &position) {
 	}
 
 	this->tiles.erase(this->tiles.begin() + index);
-	// @todo Deconstruct old value & shrink to fit?
+	this->tiles.shrink_to_fit();
+
 	return true;
 }
 
@@ -75,16 +74,22 @@ bool byrone::StorableLevel::write(const char *path) {
 		return false;
 	}
 
-	auto tileSetPathLength = std::strlen(this->tileSetPath);
+	auto tileSetPathLength = (int) std::strlen(this->tileSetPath);
 
-	stream << tileSetPathLength << this->tileSetPath;
-	stream << this->tileSize;
+	stream.write((char *) &tileSetPathLength, sizeof(int));
+	stream.write(this->tileSetPath, tileSetPathLength);
+	stream.write((char *) &this->tileSize, sizeof(int));
 
-	stream << this->tiles.size();
+	auto tileCount = (int) this->tiles.size();
+	stream.write((char *) &tileCount, sizeof(int));
 
 	for (const byrone::StorableTile &tile: this->tiles) {
 		sf::Vector2f position = tile.getPosition();
-		stream << tile.getTextureIdx() << position.x << position.y;
+		int textureId = tile.getTextureIdx();
+
+		stream.write((char *) &textureId, sizeof(int));
+		stream.write((char *) &position.x, sizeof(float));
+		stream.write((char *) &position.y, sizeof(float));
 	}
 
 	stream.close();
@@ -92,33 +97,37 @@ bool byrone::StorableLevel::write(const char *path) {
 	return stream.good();
 }
 
-byrone::StorableLevel byrone::StorableLevel::readFromFile(const char *path) {
+byrone::StorableLevel byrone::StorableLevel::loadFromFileOrDefault(const char *path,
+																   const char *defaultTileSetPath,
+																   const int &defaultTileSize) {
 	std::ifstream stream(path, std::ios::binary);
 
 	if (stream.bad()) {
-		throw byrone::load_file_exception(path);
+		return byrone::StorableLevel(defaultTileSetPath, defaultTileSize);
 	}
 
 	int tileSetPathLength;
-	stream >> tileSetPathLength;
+	stream.read((char *) &tileSetPathLength, sizeof(int));
 
 	char *tileSetPathBuffer = new char[tileSetPathLength + 1];
 	stream >> tileSetPathBuffer;
 	tileSetPathBuffer[tileSetPathLength] = '\0';
 
 	int tileSize;
-	stream >> tileSize;
+	stream.read((char *) &tileSize, sizeof(int));
 
 	byrone::StorableLevel level(tileSetPathBuffer, tileSize);
 	int tileCount;
-	stream >> tileCount;
+	stream.read((char *) &tileCount, sizeof(int));
 
 	for (int i = 0; i < tileCount; i++) {
 		int textureId;
 		float positionX;
 		float positionY;
 
-		stream >> textureId >> positionX >> positionY;
+		stream.read((char *) &textureId, sizeof(int));
+		stream.read((char *) &positionX, sizeof(float));
+		stream.read((char *) &positionY, sizeof(float));
 
 		level.addOrReplaceTile(textureId, sf::Vector2f(positionX, positionY));
 	}
