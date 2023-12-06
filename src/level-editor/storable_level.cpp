@@ -1,7 +1,6 @@
 #include "storable_level.h"
 #include "../exceptions/load_file_exception.h"
 #include <fstream>
-#include <iostream>
 
 byrone::StorableLevel::StorableLevel() = default;
 
@@ -131,6 +130,8 @@ byrone::StorableLevel byrone::StorableLevel::loadFromFileOrDefault(const char *p
 
 		level.addOrReplaceTile(textureId, sf::Vector2f(positionX, positionY));
 	}
+
+	stream.close();
 
 	return level;
 }

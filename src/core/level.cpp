@@ -1,63 +1,11 @@
 #include "level.h"
 #include "../exceptions/load_file_exception.h"
 #include <fstream>
-#include <string>
-
-#define DELIMITER ' '
 
 byrone::Level::Level() = default;
 
-// @todo Refactor
-byrone::Level::Level(const char *path, const float &windowHeight) {
-	// @todo Open as binary?
-	std::ifstream stream(path);
-
-	if (!stream.is_open()) {
-		throw byrone::load_file_exception(path);
-	}
-
-	std::string line;
-
-	std::getline(stream, line);
-	int spaceIdx = (int) line.find(DELIMITER);
-	std::string tileSet = line.substr(0, spaceIdx);
-	std::string cut = line.substr(spaceIdx + 1);
-	spaceIdx = (int) cut.find(DELIMITER);
-	int tileSize = std::stoi(cut.substr(0, spaceIdx));
-	cut = cut.substr(spaceIdx + 1);
-	spaceIdx = (int) cut.find(DELIMITER);
-	int playerX = std::stoi(cut.substr(0, spaceIdx));
-	cut = cut.substr(spaceIdx + 1);
-	int playerY = std::stoi(cut);
-
-	playerX *= tileSize;
-	playerY = windowHeight - (playerY * tileSize);
-
-	this->playerPosition = {(float) playerX, (float) playerY};
-
-	this->textureSheet = new byrone::TextureSheet(("../assets/tilesets/" + tileSet).c_str(), {tileSize, tileSize});
-
-	// @todo REFACTOR
-	while (std::getline(stream, line)) {
-		if (line.empty()) {
-			continue;
-		}
-
-		spaceIdx = (int) line.find(DELIMITER);
-		int tileIdx = std::stoi(line.substr(0, spaceIdx));
-
-		cut = line.substr(spaceIdx + 1);
-		spaceIdx = (int) cut.find(DELIMITER);
-		int tileX = std::stoi(cut.substr(0, spaceIdx));
-		int tileY = std::stoi(cut.substr(spaceIdx + 1));
-
-		tileX *= tileSize;
-		tileY = windowHeight - (tileY * tileSize);
-
-		this->tiles.push_back(byrone::Tile(this->textureSheet, tileIdx, {(float) tileX, (float) tileY}));
-	}
-
-	stream.close();
+byrone::Level::Level(const sf::Vector2f &playerPosition,
+					 const std::vector<Tile> &tiles) : playerPosition(playerPosition), tiles(tiles) {
 }
 
 void byrone::Level::draw(sf::RenderWindow *window) {
@@ -72,4 +20,46 @@ sf::Vector2f byrone::Level::getPlayerPosition() const {
 
 std::vector<byrone::Tile> *byrone::Level::getTiles() {
 	return &this->tiles;
+}
+
+byrone::Level byrone::Level::readFromFile(const char *path) {
+	std::ifstream stream(path, std::ios::binary);
+
+	if (stream.bad()) {
+		throw byrone::load_file_exception(path);
+	}
+
+	int tileSetPathLength;
+	stream.read((char *) &tileSetPathLength, sizeof(int));
+
+	char *tileSetPathBuffer = new char[tileSetPathLength + 1];
+	stream >> tileSetPathBuffer;
+	tileSetPathBuffer[tileSetPathLength] = '\0';
+
+	int tileSize;
+	stream.read((char *) &tileSize, sizeof(int));
+
+	// @todo no ptr
+	byrone::TextureSheet *textureSheet = new byrone::TextureSheet(tileSetPathBuffer, {tileSize, tileSize});
+
+	int tileCount;
+	stream.read((char *) &tileCount, sizeof(int));
+
+	std::vector<byrone::Tile> tiles(tileCount);
+
+	for (int i = 0; i < tileCount; i++) {
+		int textureId;
+		float positionX;
+		float positionY;
+
+		stream.read((char *) &textureId, sizeof(int));
+		stream.read((char *) &positionX, sizeof(float));
+		stream.read((char *) &positionY, sizeof(float));
+
+		tiles[i] = byrone::Tile(textureSheet, textureId, sf::Vector2f(positionX, positionY));
+	}
+
+	stream.close();
+
+	return byrone::Level(sf::Vector2f(0, 0), tiles);
 }

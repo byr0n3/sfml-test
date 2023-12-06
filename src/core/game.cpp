@@ -26,7 +26,7 @@ bool byrone::Game::isOpen() const {
 }
 
 void byrone::Game::initialize() {
-	this->level = byrone::Level("../assets/levels/test.lvl", this->fHeight());
+	this->level = byrone::Level::readFromFile("../assets/levels/custom.lvl");
 
 	this->player.setPosition(this->level.getPlayerPosition());
 }

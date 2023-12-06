@@ -10,7 +10,7 @@ namespace byrone {
 	public:
 		Level();
 
-		explicit Level(const char *path, const float &windowHeight);
+		explicit Level(const sf::Vector2f &playerPosition, const std::vector<Tile> &tiles);
 
 		void draw(sf::RenderWindow *window);
 
@@ -18,9 +18,9 @@ namespace byrone {
 
 		std::vector<Tile> *getTiles();
 
-	private:
-		TextureSheet *textureSheet;
+		static Level readFromFile(const char *path);
 
+	private:
 		sf::Vector2f playerPosition;
 
 		std::vector<Tile> tiles;
