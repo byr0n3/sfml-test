@@ -3,6 +3,7 @@
 #include "../core/utilities.h"
 #include "../core/input_manager.h"
 #include "editor.h"
+#include <imgui-SFML.h>
 
 int main() {
 	sf::VideoMode screenSize(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
@@ -15,6 +16,10 @@ int main() {
 	window.setFramerateLimit(60);
 	window.setKeyRepeatEnabled(false);
 
+	if (!ImGui::SFML::Init(window)) {
+		return 1;
+	}
+
 	// @todo Configurable
 	byrone::LevelEditor editor("../assets/tilesets/tileset.png", 32);
 
@@ -25,6 +30,8 @@ int main() {
 		sf::Time deltaTime = clock.restart();
 
 		for (sf::Event event = sf::Event(); window.pollEvent(event);) {
+			ImGui::SFML::ProcessEvent(window, event);
+
 			switch (event.type) {
 				case sf::Event::Closed:
 					open = false;
@@ -45,6 +52,8 @@ int main() {
 			byrone::InputManager::Instance()->handleEvent(&event);
 		}
 
+		ImGui::SFML::Update(window, deltaTime);
+
 		if (window.hasFocus()) {
 			editor.handleInput();
 
@@ -53,10 +62,14 @@ int main() {
 
 		editor.draw(&window);
 
+		ImGui::SFML::Render(window);
+
 		window.display();
 
 		byrone::InputManager::Instance()->update();
 	}
+
+	ImGui::SFML::Shutdown();
 
 	window.close();
 

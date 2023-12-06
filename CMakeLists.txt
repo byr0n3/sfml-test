@@ -4,10 +4,7 @@ project(sfml-test LANGUAGES CXX)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 
-# Fetch SFML from Git
-include(FetchContent)
-FetchContent_Declare(SFML GIT_REPOSITORY https://github.com/SFML/SFML.git GIT_TAG 2.6.x)
-FetchContent_MakeAvailable(SFML)
+add_subdirectory(dependencies)
 
 add_executable(sfml-test src/main.cpp
         src/core/entity.h src/core/entity.cpp
@@ -42,7 +39,7 @@ add_executable(level-editor src/level-editor/main.cpp
         src/exceptions/load_file_exception.h
 
         src/graphics/texture_sheet.h src/graphics/texture_sheet.cpp)
-target_link_libraries(level-editor PRIVATE sfml-graphics)
+target_link_libraries(level-editor PRIVATE ImGui-SFML::ImGui-SFML)
 target_compile_features(level-editor PRIVATE cxx_std_17)
 
 if (WIN32)
@@ -60,5 +57,3 @@ if (WIN32)
 endif ()
 
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
-
-install(TARGETS sfml-test)

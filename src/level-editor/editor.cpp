@@ -2,6 +2,7 @@
 #include "../exceptions/load_file_exception.h"
 #include "../core/utilities.h"
 #include "../core/input_manager.h"
+#include <imgui.h>
 #include <SFML/Window/Mouse.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <cmath>
@@ -118,6 +119,11 @@ void byrone::LevelEditor::update(sf::RenderWindow *window, const float &deltaTim
 
 void byrone::LevelEditor::draw(sf::RenderWindow *window) {
 	window->clear(sf::Color::Blue);
+
+	// Draw UI
+	ImGui::Begin("File");
+	ImGui::Text("Hello world!");
+	ImGui::End();
 
 	window->draw(this->currentTile);
 
