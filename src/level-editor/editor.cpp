@@ -9,12 +9,16 @@
 
 #define CAMERA_MOVE_SPEED 100.0f
 #define CUSTOM_LEVEL_PATH "../assets/levels/custom.lvl"
+#define NOTIFICATION_DISPLAY_TIME 3.0f
 
 // @todo Private fields on editor instance?
 int textureIdx = 0;
 int maxTextureIdx = 0;
 sf::Vector2i cameraMovement = VECTOR2I_ZERO;
 sf::Vector2f placePosition = VECTOR2F_ZERO;
+// @todo REFACTOR
+float savedNotificationDisplayTime = 0.0f;
+bool showSavedNotification = false;
 
 void updatePlacePosition(sf::RenderWindow *window, float tileSize) {
 	sf::Vector2f pixelPosition = window->mapPixelToCoords(sf::Mouse::getPosition(*window));
@@ -87,6 +91,8 @@ void byrone::LevelEditor::handleInput() {
 	// Saving level to file
 	if (byrone::InputManager::Instance()->isKeyPressed(sf::Keyboard::Enter)) {
 		this->level.write(CUSTOM_LEVEL_PATH);
+
+		showSavedNotification = true;
 	}
 }
 
@@ -115,15 +121,33 @@ void byrone::LevelEditor::update(sf::RenderWindow *window, const float &deltaTim
 	if (byrone::InputManager::Instance()->isMouseDown(sf::Mouse::Right)) {
 		this->level.removeTile(placePosition);
 	}
+
+	// @todo REFACTOR
+	if (showSavedNotification) {
+		if (savedNotificationDisplayTime < NOTIFICATION_DISPLAY_TIME) {
+			savedNotificationDisplayTime += deltaTime;
+		} else {
+			showSavedNotification = false;
+			savedNotificationDisplayTime = 0.0f;
+		}
+	}
 }
 
 void byrone::LevelEditor::draw(sf::RenderWindow *window) {
 	window->clear(sf::Color::Blue);
 
 	// Draw UI
-	ImGui::Begin("File");
-	ImGui::Text("Hello world!");
-	ImGui::End();
+	if (showSavedNotification) {
+		ImGui::SetNextWindowPos(ImVec2(0, 0));
+
+		ImGui::Begin("Saved",
+					 nullptr,
+					 ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs);
+		std::string a("File saved to: ");
+		a.append(CUSTOM_LEVEL_PATH);
+		ImGui::Text("%s", a.c_str());
+		ImGui::End();
+	}
 
 	window->draw(this->currentTile);
 

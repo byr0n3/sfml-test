@@ -3,6 +3,7 @@
 #include "../core/utilities.h"
 #include "../core/input_manager.h"
 #include "editor.h"
+#include <imgui.h>
 #include <imgui-SFML.h>
 
 int main() {
@@ -16,9 +17,12 @@ int main() {
 	window.setFramerateLimit(60);
 	window.setKeyRepeatEnabled(false);
 
-	if (!ImGui::SFML::Init(window)) {
+	if (!ImGui::SFML::Init(window, true)) {
 		return 1;
 	}
+
+	ImGui::GetIO().IniFilename = nullptr;
+	ImGui::GetIO().LogFilename = nullptr;
 
 	// @todo Configurable
 	byrone::LevelEditor editor("../assets/tilesets/tileset.png", 32);

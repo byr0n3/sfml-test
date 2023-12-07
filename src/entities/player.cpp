@@ -7,6 +7,7 @@
 #define TEXTURE_TILE_SIZE sf::Vector2i(16, 16)
 #define TEXTURE_PATH "../assets/textures/player.png"
 #define TEXTURE_SCALE 2.0f
+#define BOUNDING_BOX_OFFSET 12
 
 byrone::Player::Player(sf::Vector2f position) : flags(byrone::PlayerFlags::None) {
 	this->textureSheet = new byrone::TextureSheet(TEXTURE_PATH, TEXTURE_TILE_SIZE);
@@ -68,8 +69,7 @@ void byrone::Player::update(const float &deltaTime, byrone::Level *level) {
 	sf::Vector2f targetPosition = this->getPosition() + (this->velocity * deltaTime);
 	this->velocity.x = 0.0f;
 
-	// @todo Make smaller so we can fall in between one tile gaps
-	sf::FloatRect playerBounds(targetPosition.x, targetPosition.y, size.x, size.y);
+	sf::FloatRect playerBounds(targetPosition.x + (BOUNDING_BOX_OFFSET / 2), targetPosition.y, size.x - BOUNDING_BOX_OFFSET, size.y);
 
 	byrone::Flags::remove<byrone::PlayerFlags, byrone::PlayerFlags::Grounded>(this->flags);
 

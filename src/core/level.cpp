@@ -25,7 +25,7 @@ std::vector<byrone::Tile> *byrone::Level::getTiles() {
 byrone::Level byrone::Level::readFromFile(const char *path) {
 	std::ifstream stream(path, std::ios::binary);
 
-	if (stream.bad()) {
+	if (!stream.is_open()) {
 		throw byrone::load_file_exception(path);
 	}
 

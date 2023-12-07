@@ -69,7 +69,7 @@ std::vector<byrone::StorableTile> *byrone::StorableLevel::getTiles() {
 bool byrone::StorableLevel::write(const char *path) {
 	std::ofstream stream(path, std::ios::binary);
 
-	if (stream.bad()) {
+	if (!stream.is_open()) {
 		return false;
 	}
 
@@ -101,7 +101,7 @@ byrone::StorableLevel byrone::StorableLevel::loadFromFileOrDefault(const char *p
 																   const int &defaultTileSize) {
 	std::ifstream stream(path, std::ios::binary);
 
-	if (stream.bad()) {
+	if (!stream.is_open()) {
 		return byrone::StorableLevel(defaultTileSetPath, defaultTileSize);
 	}
 
