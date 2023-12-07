@@ -3,6 +3,7 @@
 
 #include <cstdio>
 #include <SFML/Graphics.hpp>
+#include <unordered_map>
 
 namespace byrone {
 	struct InputKey {

@@ -1,12 +1,13 @@
 #include "storable_level.h"
 #include "../exceptions/load_file_exception.h"
 #include <fstream>
+#include <cstring>
 
 byrone::StorableLevel::StorableLevel() = default;
 
 byrone::StorableLevel::StorableLevel(const char *tileSetPath, const int &tileSize) : tileSetPath(tileSetPath),
-																					 tileSize(tileSize),
-																					 tiles() {
+                                                                                     tileSize(tileSize),
+                                                                                     tiles() {
 
 }
 
@@ -97,8 +98,8 @@ bool byrone::StorableLevel::write(const char *path) {
 }
 
 byrone::StorableLevel byrone::StorableLevel::loadFromFileOrDefault(const char *path,
-																   const char *defaultTileSetPath,
-																   const int &defaultTileSize) {
+                                                                   const char *defaultTileSetPath,
+                                                                   const int &defaultTileSize) {
 	std::ifstream stream(path, std::ios::binary);
 
 	if (!stream.is_open()) {
