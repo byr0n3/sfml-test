@@ -44,6 +44,8 @@ namespace byrone {
 
 		InputManager();
 
+		bool hasKey(const int &key) const;
+
 		std::unordered_map<int, byrone::InputKey> inputs;
 		float mouseDelta;
 	};
